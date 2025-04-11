@@ -1,7 +1,7 @@
 {
-  "name": "web-app-template-v6",
-  "description": "Web App Template is a foundation for building web apps with Vue 3, TypeScript, and Quasar 2.",
-  "version": "6.0.0",
+  "name": "sjcpf-poc",
+  "description": "SJCPF",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -47,10 +47,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/michael-255/web-app-template-v6.git"
+    "url": "git+https://github.com/sjcpf/sjcpf-poc.git"
   },
   "bugs": {
-    "url": "https://github.com/michael-255/web-app-template-v6/issues"
+    "url": "https://github.com/sjcpf/sjcpf-poc/issues"
   },
-  "homepage": "https://github.com/michael-255/web-app-template-v6#readme"
+  "homepage": "https://github.com/sjcpf/sjcpf-poc#readme"
 }
