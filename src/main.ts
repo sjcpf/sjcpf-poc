@@ -1,7 +1,6 @@
 import { symRoundedClose } from '@quasar/extras/material-symbols-rounded'
 import '@quasar/extras/material-symbols-rounded/material-symbols-rounded.css'
 import '@quasar/extras/roboto-font/roboto-font.css'
-import { createPinia } from 'pinia'
 import { Dialog, Loading, Meta, Notify, Quasar } from 'quasar'
 import 'quasar/dist/quasar.css'
 import quasarIconSet from 'quasar/icon-set/material-symbols-rounded'
@@ -12,7 +11,6 @@ import router from './router'
 
 const app = createApp(App)
 
-app.use(createPinia())
 app.use(router)
 app.use(Quasar, {
   iconSet: quasarIconSet,
