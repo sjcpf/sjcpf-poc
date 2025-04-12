@@ -18,19 +18,29 @@ const router = createRouter({
           component: ViewHome,
         },
         {
-          path: '/parks',
-          name: RouteNameEnum.HOME,
-          component: ViewHome,
-        },
-        {
           path: '/events',
-          name: RouteNameEnum.HOME,
-          component: ViewHome,
+          name: RouteNameEnum.EVENTS,
+          component: () => import('@/views/ViewEvents.vue'),
         },
         {
-          path: '/trails',
-          name: RouteNameEnum.HOME,
-          component: ViewHome,
+          path: '/parks',
+          name: RouteNameEnum.PARKS,
+          component: () => import('@/views/ViewParks.vue'),
+        },
+        {
+          path: '/parks/:park/information',
+          name: RouteNameEnum.PARK_INFORMATION,
+          component: () => import('@/views/ViewParkInformation.vue'),
+        },
+        {
+          path: '/parks/:park/amenities',
+          name: RouteNameEnum.PARK_AMENITIES,
+          component: () => import('@/views/ViewParkAmenities.vue'),
+        },
+        {
+          path: '/parks/:park/trails',
+          name: RouteNameEnum.PARK_TRAILS,
+          component: () => import('@/views/ViewParkTrails.vue'),
         },
         {
           path: '/about',

@@ -21,9 +21,9 @@ app.use(Quasar, {
     Loading,
   },
   config: {
-    dark: true,
+    dark: false,
     brand: {
-      primary: '#1976d2', // blue-8 (Primary Brand Color)
+      primary: '#028672',
       secondary: '#607d8b', // blue-grey (LOG)
       accent: '#673ab7', // deep-purple-6 (DEBUG)
       info: '#0d47a1', // blue-10 (INFO)

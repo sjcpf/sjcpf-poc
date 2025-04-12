@@ -19,6 +19,7 @@ import {
   symRoundedError,
   symRoundedEventAvailable,
   symRoundedFeatureSearch,
+  symRoundedHome,
   symRoundedInfo,
   symRoundedKeyboardArrowDown,
   symRoundedKeyboardArrowUp,
@@ -30,6 +31,7 @@ import {
   symRoundedMenu,
   symRoundedMonitoring,
   symRoundedMoreVert,
+  symRoundedPark,
   symRoundedPublish,
   symRoundedRecommend,
   symRoundedRedeem,
@@ -107,3 +109,7 @@ export const calendarIcon = symRoundedCalendarToday
 export const calendarCheckIcon = symRoundedEventAvailable
 export const scheduleTimeIcon = symRoundedSchedule
 export const recommendIcon = symRoundedRecommend
+
+// SJCPF
+export const homeIcon = symRoundedHome
+export const parkIcon = symRoundedPark

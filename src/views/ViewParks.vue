@@ -3,11 +3,11 @@ import PageResponsive from '@/components/page/PageResponsive.vue'
 import { appName } from '@/shared/constants'
 import { useMeta } from 'quasar'
 
-useMeta({ title: `${appName} - Home` })
+useMeta({ title: `${appName} - Parks` })
 </script>
 
 <template>
   <PageResponsive>
-    <h3>Home</h3>
+    <h3>Parks</h3>
   </PageResponsive>
 </template>
