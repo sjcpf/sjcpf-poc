@@ -4,6 +4,7 @@ import {
   symRoundedAddCircle,
   symRoundedArrowForward,
   symRoundedBugReport,
+  symRoundedCalendarMonth,
   symRoundedCalendarToday,
   symRoundedCancel,
   symRoundedCheck,
@@ -113,3 +114,4 @@ export const recommendIcon = symRoundedRecommend
 // SJCPF
 export const homeIcon = symRoundedHome
 export const parkIcon = symRoundedPark
+export const eventsIcon = symRoundedCalendarMonth
