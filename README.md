@@ -20,3 +20,4 @@ A simple public access web app for the St. Joseph County parks foundation.
 2. Navigate to the "sjcpf-poc" and open it in your IDE of choice.
 3. In the "sjcpf-poc" folder, do `npm install` to install the project package dependencies.
 4. Do `npm run dev` to run a dev build on your local machine.
+5. Ctrl+click the "Local" URL in the Vite build console output or open the browser of your choice and navigate to `http://localhost:5173/`.
