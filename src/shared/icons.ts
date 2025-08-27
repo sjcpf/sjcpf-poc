@@ -2,7 +2,7 @@ import { matStar, matStarBorder } from '@quasar/extras/material-icons'
 import {
   symRoundedAdd,
   symRoundedAddCircle,
-  symRoundedArrowForward,
+  symRoundedArrowBack,
   symRoundedBugReport,
   symRoundedCalendarMonth,
   symRoundedCalendarToday,
@@ -47,6 +47,9 @@ import {
   symRoundedTune,
   symRoundedViewWeek,
   symRoundedWarning,
+  symRoundedCall,
+  symRoundedPinDrop,
+  symRoundedShare
 } from '@quasar/extras/material-symbols-rounded'
 
 /**
@@ -71,13 +74,14 @@ export const logsTableIcon = symRoundedFeatureSearch
 export const settingsTableIcon = symRoundedSettingsApplications
 
 // Actions Types
+export const callIcon = symRoundedCall
 export const saveIcon = symRoundedSave
 export const topOfPageIcon = symRoundedStat2
 export const searchIcon = symRoundedSearch
 export const inspectIcon = symRoundedManageSearch
 export const upIcon = symRoundedKeyboardArrowUp
 export const downIcon = symRoundedKeyboardArrowDown
-export const backIcon = symRoundedArrowForward
+export const backIcon = symRoundedArrowBack
 export const closeIcon = symRoundedClose
 export const cancelIcon = symRoundedCancel
 export const addIcon = symRoundedAdd
@@ -95,6 +99,8 @@ export const chartsIcon = symRoundedMonitoring
 export const checkIcon = symRoundedCheck
 export const lockIcon = symRoundedLock
 export const unlockIcon = symRoundedLockOpenRight
+export const mapPinIcon = symRoundedPinDrop
+export const shareIcon = symRoundedShare
 
 // Design Elements
 export const menuIcon = symRoundedMenu

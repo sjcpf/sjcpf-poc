@@ -25,6 +25,7 @@ import { RouterView } from 'vue-router'
         flat
         :icon="infoIcon"
         aria-label="Info"
+        @click="$router.push({ name: RouteNameEnum.ABOUT })"
       />
     </q-toolbar>
     <q-page-container>

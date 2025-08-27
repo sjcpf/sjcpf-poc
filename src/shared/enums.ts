@@ -18,6 +18,7 @@ export enum RouteNameEnum {
   PARK_INFORMATION = 'ParkInformation',
   PARK_AMENITIES = 'ParkAmenities',
   PARK_TRAILS = 'ParkTrails',
+  ACTIVITIES = 'Activities',
   ABOUT = 'About',
   NOT_FOUND = 'NotFound',
 }

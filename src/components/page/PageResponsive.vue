@@ -8,7 +8,7 @@
 </script>
 
 <template>
-  <q-page padding class="q-pd-md">
+  <q-page>
     <div class="row justify-center">
       <div class="responsive-container">
         <slot/>
@@ -20,7 +20,6 @@
 <style scoped>
 .responsive-container {
   width: 100%;
-  padding: 20px;
   max-width: 800px;
 }
 </style>
