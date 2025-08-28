@@ -2,7 +2,7 @@
 import PageResponsive from '@/components/page/PageResponsive.vue'
 import { appName } from '@/shared/constants'
 import { RouteNameEnum } from '@/shared/enums'
-import { backIcon, eventsIcon, homeIcon } from '@/shared/icons'
+import { backIcon } from '@/shared/icons'
 import { useMeta } from 'quasar'
 import { parks } from '@/shared/constants'
 
