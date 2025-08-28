@@ -114,7 +114,6 @@ const activity = ref(activityData[key] || {})
   width: 100vw;
   flex-direction: column;
   position: fixed;
-  width: 110vw;
   height: 515px/2;
   left: 50%;
   transform: translateX(-50%);

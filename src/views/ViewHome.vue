@@ -132,7 +132,7 @@ const search = ref('')
 .curved-section {
   flex-direction: column;
   position: absolute;
-  width: 110vw;
+  width: 100vw;
   height: 515px/2;
   left: 50%;
   transform: translateX(-50%);
