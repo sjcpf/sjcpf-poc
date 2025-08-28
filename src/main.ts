@@ -7,6 +7,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import './assets/base.css'
 import router from './router'
+import { setupCalendar, Calendar } from 'v-calendar'
+import 'v-calendar/dist/style.css'
 
 const app = createApp(App)
 
@@ -51,5 +53,12 @@ app.use(Quasar, {
     // ..and many more (check Installation card on each Quasar component/directive/plugin)
   },
 })
+app.use(setupCalendar, {
+  masks: {
+    input: 'YYYY-MM-DD',
+  },
+})
+
+app.component('VCalendar', Calendar)
 
 app.mount('#app')

@@ -43,6 +43,11 @@ const router = createRouter({
           component: () => import('@/views/ViewParkTrails.vue'),
         },
         {
+          path: '/parks/:park/activities/:activity',
+          name: RouteNameEnum.ACTIVITIES,
+          component: () => import('@/views/ViewActivity.vue'),
+        },
+        {
           path: '/activities/:activity',
           name: RouteNameEnum.ACTIVITIES,
           component: () => import('@/views/ViewActivity.vue'),
