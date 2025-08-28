@@ -22,7 +22,7 @@ export const parks: Park[] = [
   {
     id: 0,
     name: 'Bendix Woods',
-    image: '/images/parks/bendix_woods.png',
+    image: '/images/parks/bendix_woods.webp',
     phone: '(574) 654-3155',
     location: '+41.66972-086.48833',
     address: '56960 Timothy Road New Carlisle, IN 46552-9522',
@@ -36,7 +36,7 @@ export const parks: Park[] = [
   {
     id: 1,
     name: 'Beverly D. Crone Restoration Area',
-    image: '/images/parks/crone_restore.png',
+    image: '/images/parks/crone_restore.webp',
     phone: '(574) 277-4828',
     location: '+41.61899-086.27755',
     address: 'Jackson Road and Linden Road South Bend, IN 46614',
@@ -50,7 +50,7 @@ export const parks: Park[] = [
   {
     id: 2,
     name: 'Chamberlain Lake',
-    image: '/images/parks/chamberlain_lake.png',
+    image: '/images/parks/chamberlain_lake.webp',
     phone: '(574) 654-3155',
     location: '+41.64723-086.36945',
     address: '58111 Crumstown Highway South Bend, IN 46619',
@@ -64,7 +64,7 @@ export const parks: Park[] = [
   {
     id: 3,
     name: 'Ferrettie / Baugo Creek',
-    image: '/images/parks/baugo_creek.png',
+    image: '/images/parks/baugo_creek.webp',
     phone: '(574) 674-9765',
     location: '+41.66589-086.06142',
     address: '57057 Ash Road Osceola, IN 46561',
@@ -78,7 +78,7 @@ export const parks: Park[] = [
   {
     id: 4,
     name: 'LaSalle Trail',
-    image: '/images/parks/lasalle_trail.png',
+    image: '/images/parks/lasalle_trail.webp',
     phone: '(574) 277-4828',
     location: '+41.72680-086.25288',
     address: '19701 Cleveland Rd South Bend, IN 46637',
@@ -92,7 +92,7 @@ export const parks: Park[] = [
   {
     id: 5,
     name: 'Spicer Lake',
-    image: '/images/parks/spicer_lake.png',
+    image: '/images/parks/spicer_lake.webp',
     phone: '(574) 654-3155',
     location: '+41.75326-086.52426',
     address: '50840 County Line Road New Carlisle, IN 46552-4564',
@@ -106,7 +106,7 @@ export const parks: Park[] = [
   {
     id: 6,
     name: `St. Patrick's County Park`,
-    image: '/images/parks/st_patricks.png',
+    image: '/images/parks/st_patricks.webp',
     phone: '(574) 277-4828',
     location: '+41.75547-086.26585',
     address: '50651 Laurel Road South Bend, IN 46637',
