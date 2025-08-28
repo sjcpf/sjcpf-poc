@@ -6,9 +6,10 @@ import { useMeta } from 'quasar'
 import { ref, computed, onMounted } from 'vue'
 import { events } from '@/shared/constants'
 import type { Page } from 'v-calendar/dist/types/src/utils/page.js'
+import type { CalendarComponent } from 'v-calendar/dist/types/tests/unit/specs/utils.js'
 
 const calendarWrapper = ref<HTMLElement | null>(null)
-const calendar = ref(null)
+const calendar = ref<CalendarComponent>(null)
 const selectedDate = ref<Date | null>(null)
 const visibleMonth = ref(new Date().getMonth())
 const visibleYear = ref(new Date().getFullYear())
