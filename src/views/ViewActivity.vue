@@ -93,6 +93,7 @@ const activity = ref(activityData[key] || {})
 }
 .info-card {
   background: #e0f7f7;
+  height: 100%;
   border-top-left-radius: 45px;
   border-top-right-radius: 45px;
   transform: translateY(-60px);
@@ -109,9 +110,10 @@ const activity = ref(activityData[key] || {})
 }
 .share-section {
   background: white;
+  bottom: 0;
   width: 100vw;
   flex-direction: column;
-  position: absolute;
+  position: fixed;
   width: 110vw;
   height: 515px/2;
   left: 50%;

@@ -142,7 +142,7 @@ useMeta({ title: `${appName} - Events` })
           class="event-list-item q-mt-md q-pa-md bg-primary text-white rounded-borders row items-center"
         >
           <!-- Left column: Date -->
-          <div class="col-3 flex flex-center">
+          <div class="col-2 flex flex-center">
             <div class="column items-center">
               <div class="event-day-text event-font">{{ new Date(event.date).toLocaleDateString('en-US', { weekday: 'short' }) }}</div>
               <div class="event-day-text event-font">{{ new Date(event.date).getDate() }}</div>
@@ -150,16 +150,16 @@ useMeta({ title: `${appName} - Events` })
           </div>
 
           <!-- Right column: Event details -->
-          <div class="col-9 column">
+          <div class="col-10 column">
             <div class="event-title event-font">{{ event.title }}</div>
-            <div class="event-subtext event-font">
-              <q-icon :name="scheduleTimeIcon"/>
-              {{ event.time }}
-            </div>
-            <div class="event-subtext event-font">
-              <q-icon :name="mapPinIcon"/>
-              {{ event.location }}
-            </div>
+              <div class="event-subtext event-font">
+                <q-icon :name="scheduleTimeIcon"/>
+                {{ event.time }}
+              </div>
+              <div class="event-subtext event-font">
+                <q-icon :name="mapPinIcon"/>
+                {{ event.location }}
+              </div>
           </div>
         </div>
       </div>
