@@ -168,7 +168,119 @@ export const activityData: Record<string, ActivityData> = {
       { label: 'Disc Golf Score Card', url: '#' }
     ]
   },
-}
+  biking: {
+    title: 'Bike Trails',
+    image: '/images/bike.png',
+    phone: '574-674-9765',
+    location: 'Bendix Woods County Park',
+    details: [
+      'Open Daily, Sunrise to Sunset',
+      'Several trails ranging from beginner to advanced',
+      'Helmets required for all riders',
+      'Trail map available at park office'
+    ],
+    description:
+      'Enjoy miles of scenic biking trails suitable for all skill levels. Trail maps and rental bikes available at the park entrance.',
+    documents: [
+      { label: 'Bike Trail Map', url: '#' }
+    ]
+  },
+  canoeing: {
+    title: 'Canoe Rentals',
+    image: '/images/canoe.png',
+    phone: '574-674-9765',
+    location: 'Ferrettie / Baugo Creek County Park',
+    details: [
+      'Available May through September',
+      'Rental Hours: 9 A.M. – 6 P.M.',
+      'Life jackets provided',
+      'Reservations recommended for groups'
+    ],
+    description:
+      'Rent a canoe and enjoy a peaceful paddle along the park’s waterways. Perfect for beginners and families.',
+    documents: [
+      { label: 'Canoe Rental Info', url: '#' }
+    ]
+  },
+  geoCache: {
+    title: 'Geocaching',
+    image: '/images/geo.png',
+    phone: '574-674-9765',
+    location: 'Various Parks in County',
+    details: [
+      'Self-guided activity, open year-round',
+      'Bring a GPS device or smartphone with geocaching app',
+      'Be respectful of wildlife and other park visitors'
+    ],
+    description:
+      'Explore the parks while searching for hidden caches. A fun way to combine hiking and treasure hunting.',
+    documents: [
+      { label: 'Geocaching Tips', url: '#' }
+    ]
+  },
+  hiking: {
+    title: 'Hiking Trails',
+    image: '/images/hike.png',
+    phone: '574-674-9765',
+    location: 'All County Parks',
+    details: [
+      'Trails open daily from sunrise to sunset',
+      'Variety of trails from easy walks to challenging hikes',
+      'Trail maps available at park offices'
+    ],
+    description:
+      'Enjoy nature and stay active on the county’s extensive network of hiking trails.',
+    documents: [
+      { label: 'Trail Map', url: '#' }
+    ]
+  },
+  orienteering: {
+    title: 'Orienteering',
+    image: '/images/orient.png',
+    phone: '574-674-9765',
+    location: 'Bendix Woods County Park',
+    details: [
+      'Equipment available at park office',
+      'Self-guided or group courses',
+      'Open Daily, sunrise to sunset'
+    ],
+    description:
+      'Test your navigation skills using a map and compass. Great for individuals and groups looking for a challenge.',
+    documents: [
+      { label: 'Orienteering Map', url: '#' }
+    ]
+  },
+  playGround: {
+    title: 'Playgrounds',
+    image: '/images/play.png',
+    phone: '574-674-9765',
+    location: 'All County Parks',
+    details: [
+      'Open daily, sunrise to sunset',
+      'Safe for children of all ages',
+      'Benches and picnic areas nearby'
+    ],
+    description:
+      'Children can enjoy a variety of playgrounds throughout the county parks, suitable for all ages.',
+    documents: []
+  },
+  runing: {
+    title: 'Running Trails',
+    image: '/images/run.png',
+    phone: '574-674-9765',
+    location: 'Bendix Woods County Park',
+    details: [
+      'Open Daily, sunrise to sunset',
+      'Trails vary in length and difficulty',
+      'Well-marked and maintained'
+    ],
+    description:
+      'Perfect for runners of all levels. Enjoy scenic routes and well-maintained trails for your daily run.',
+    documents: [
+      { label: 'Running Trail Map', url: '#' }
+    ]
+  }
+};
 
 export const events = [
   // July

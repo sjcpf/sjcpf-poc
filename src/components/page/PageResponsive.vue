@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// import { topOfPageIcon } from '@/shared/icons'
 
 /**
  * Responsive page with a page scroller. Additional bottom margin is added to the page content to

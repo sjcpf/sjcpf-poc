@@ -6,7 +6,7 @@ import { RouterView } from 'vue-router'
 
 <template>
   <q-layout view="hHh lpr lfr">
-    <q-toolbar class="bg-white row justify-between q-pt-sm q-pb-sm">
+    <q-toolbar class="bg-white row justify-between q-pt-sm q-pb-sm q-px-none">
       <q-btn
         flat
         :icon="menuIcon"
@@ -21,7 +21,7 @@ import { RouterView } from 'vue-router'
         @click="$router.push({ name: RouteNameEnum.HOME })"
         class="cursor-pointer"
       />
-       <q-btn
+      <q-btn
         flat
         :icon="infoIcon"
         aria-label="Info"
