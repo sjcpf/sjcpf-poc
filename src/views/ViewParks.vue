@@ -13,7 +13,7 @@ useMeta({ title: `${appName} - Parks` })
   <PageResponsive>
     <div class="hero-top-bar flex justify-left items-center">
       <q-btn flat round :icon="backIcon" @click="$router.back()" />
-      <h4 class="text-h6 hero-top-bar page-name">Programs & Events</h4>
+      <h4 class="text-h6 hero-top-bar page-name">Park List</h4>
     </div>
     <div class="q-pa-md">
       <q-img
