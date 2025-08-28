@@ -3,7 +3,129 @@ export const appName = 'SJCPF'
 export const appDescription = `
 ${appName} provides information about parks, trails, and events in St. Joseph County.`
 
-export const activities = [
+type Park = {
+  id: number;
+  name: string
+  image: string;
+  phone: string;
+  location: string;
+  address: string;
+  city: string;
+  state: string;
+  details: string[];
+  activities: Activity[];
+  description: string;
+  documents: { label: string; url: string }[];
+};
+
+export const parks: Park[] = [
+  {
+    id: 0,
+    name: 'Bendix Woods',
+    image: '/images/parks/bendix_woods.png',
+    phone: '(574) 654-3155',
+    location: '+41.66972-086.48833',
+    address: '56960 Timothy Road New Carlisle, IN 46552-9522',
+    city: 'New Carlisle',
+    state: 'IN',
+    details: ['195 acres with wooded trails, ponds and fields'],
+    activities: [],
+    description: 'A large forested park with many activities',
+    documents: []
+  },
+  {
+    id: 1,
+    name: 'Beverly D. Crone Restoration Area',
+    image: '/images/parks/crone_restore.png',
+    phone: '(574) 277-4828',
+    location: '+41.61899-086.27755',
+    address: 'Jackson Road and Linden Road South Bend, IN 46614',
+    city: 'South Bend',
+    state: 'IN',
+    details: ['111 acres of undeveloped land'],
+    activities: [],
+    description: 'A medium park featuring easy trails and fields',
+    documents: []
+  },
+  {
+    id: 2,
+    name: 'Chamberlain Lake',
+    image: '/images/parks/chamberlain_lake.png',
+    phone: '(574) 654-3155',
+    location: '+41.64723-086.36945',
+    address: '58111 Crumstown Highway South Bend, IN 46619',
+    city: 'South Bend',
+    state: 'IN',
+    details: ['82.7 acres of lake and wetlands'],
+    activities: [],
+    description: 'Woods, trails, wetlands, and a lake',
+    documents: []
+  },
+  {
+    id: 3,
+    name: 'Ferrettie / Baugo Creek',
+    image: '/images/parks/baugo_creek.png',
+    phone: '(574) 674-9765',
+    location: '+41.66589-086.06142',
+    address: '57057 Ash Road Osceola, IN 46561',
+    city: 'Osceola',
+    state: 'IN',
+    details: ['214 acres with trails along Baugo Creek, open fields'],
+    activities: [],
+    description: 'A very large park with a small lake, creek, and trails',
+    documents: []
+  },
+  {
+    id: 4,
+    name: 'LaSalle Trail',
+    image: '/images/parks/lasalle_trail.png',
+    phone: '(574) 277-4828',
+    location: '+41.72680-086.25288',
+    address: '19701 Cleveland Rd South Bend, IN 46637',
+    city: 'South Bend',
+    state: 'IN',
+    details: ['12.61 Acres along a paved trail from Roseland to the north state line, connecting with Niles Township trails'],
+    activities: [],
+    description: 'A 3.5 mile paved trail',
+    documents: []
+  },
+  {
+    id: 5,
+    name: 'Spicer Lake',
+    image: '/images/parks/spicer_lake.png',
+    phone: '(574) 654-3155',
+    location: '+41.75326-086.52426',
+    address: '50840 County Line Road New Carlisle, IN 46552-4564',
+    city: 'New Carlisle',
+    state: 'IN',
+    details: ['320 acres with trails along wetlands, woods and old-growth fields'],
+    activities: [],
+    description: 'A large park with many trails woods, fields, and wetlands',
+    documents: []
+  },
+  {
+    id: 6,
+    name: `St. Patrick's County Park`,
+    image: '/images/parks/st_patricks.png',
+    phone: '(574) 277-4828',
+    location: '+41.75547-086.26585',
+    address: '50651 Laurel Road South Bend, IN 46637',
+    city: 'South Bend',
+    state: 'IN',
+    details: ['398 acres with wooded trails, ponds and St. Joseph River frontage'],
+    activities: [],
+    description: 'A large park along the St. Joseph River with trails and ponds',
+    documents: []
+  },
+];
+
+type Activity = {
+  name: string;
+  label: string;
+  img: string;
+}
+
+export const activities: Activity[] = [
   { name:'biking', label: 'Bike Trails', img: '/images/bike.png' },
   { name:'canoeing', label: 'Canoe Rentals', img: '/images/canoe.png' },
   { name:'discGolf', label: 'Disc Golf', img: '/images/disc.png' },
@@ -14,7 +136,7 @@ export const activities = [
   { name:'runing', label: 'Running Wild', img: '/images/run.png' }
 ]
 
-type Activity = {
+type ActivityData = {
   title: string;
   image: string;
   phone: string;
@@ -25,7 +147,7 @@ type Activity = {
 };
 
 // Mock data loader (replace with API/store later)
-export const activityData: Record<string, Activity> = {
+export const activityData: Record<string, ActivityData> = {
   discGolf: {
     title: 'Disc Golf',
     image: '/images/disc.png',

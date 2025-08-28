@@ -47,7 +47,12 @@ const search = ref('')
       <div class="row q-mt-lg q-col-gutter-md q-mb-xl" style="height:236px">
         <!-- Left column spans two rows -->
         <div class="col-6 flex column">
-          <q-img src="/images/park_list.png" ratio="1" class="rounded-borders col">
+          <q-img
+            src="/images/park_list.png"
+            ratio="1"
+            class="rounded-borders col"
+            @click="$router.push({ name: RouteNameEnum.PARKS })"
+          >
             <div class="image-button-label absolute-bottom text-white text-subtitle2 q-pa-sm">
               View Park List
             </div>
@@ -55,12 +60,21 @@ const search = ref('')
         </div>
         <!-- Right column contains two images stacked vertically -->
         <div class="col-6 flex column">
-          <q-img src="/images/events.png" ratio="1" class="rounded-borders col" @click="$router.push({ name: RouteNameEnum.EVENTS })">
+          <q-img
+            src="/images/events.png"
+            ratio="1"
+            class="rounded-borders col"
+            @click="$router.push({ name: RouteNameEnum.EVENTS })"
+          >
             <div class="image-button-label absolute-bottom text-white text-subtitle2 q-pa-sm">
               Events
             </div>
           </q-img>
-          <q-img src="/images/seasonal.png" ratio="1" class="rounded-borders q-mt-md col">
+          <q-img
+            src="/images/seasonal.png"
+            ratio="1"
+            class="rounded-borders q-mt-md col"
+          >
             <div class="image-button-label absolute-bottom bg- text-white text-subtitle2 q-pa-sm">
               Seasonal Activities
             </div>

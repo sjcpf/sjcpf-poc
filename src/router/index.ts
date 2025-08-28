@@ -23,6 +23,11 @@ const router = createRouter({
           component: () => import('@/views/ViewEvents.vue'),
         },
         {
+          path: '/calendar',
+          name: RouteNameEnum.CALENDAR,
+          component: () => import('@/views/ViewCalendar.vue'),
+        },
+        {
           path: '/parks',
           name: RouteNameEnum.PARKS,
           component: () => import('@/views/ViewParks.vue'),

@@ -1,166 +1,48 @@
-<script setup lang="ts">
-import PageResponsive from '@/components/page/PageResponsive.vue'
-import { appName } from '@/shared/constants'
-import { backIcon, mapPinIcon, scheduleTimeIcon } from '@/shared/icons'
-import { useMeta } from 'quasar'
-import { ref, computed, onMounted } from 'vue'
-import { events } from '@/shared/constants'
-import type { Page } from 'v-calendar/dist/types/src/utils/page.js'
-import type { CalendarComponent } from 'v-calendar/dist/types/tests/unit/specs/utils.js'
 
-const calendarWrapper = ref<HTMLElement | null>(null)
-const calendar = ref<CalendarComponent>(null)
-const selectedDate = ref<Date | null>(null)
-const visibleMonth = ref(new Date().getMonth())
-const visibleYear = ref(new Date().getFullYear())
+<script lang='ts' setup>
+import { backIcon } from '@/shared/icons';
+import PageResponsive from '@/components/page/PageResponsive.vue';
 
-onMounted(() => {
-  if (calendar.value) {
-    calendar.value.move(new Date())
-  }
-})
-
-interface VCalendarDay {
-  date: Date       // JS Date object
-  weekday: number  // 0 = Sunday, 6 = Saturday
-}
-
-function onDayClick(day: VCalendarDay) {
-  // 'day.date' is a JS Date object
-  selectedDate.value = day.date
-  console.log('User selected date:', selectedDate.value)
-  console.log(eventsForSelected)
-}
-
-function handleClickOutside(event: MouseEvent) {
-  const target = event.target as HTMLElement
-  // if clicked element does NOT have class 'vc-day-content'
-  if (!target.classList.contains('vc-day-content')) {
-    console.log('User clicked OFF of dates');
-    selectedDate.value = null
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-/*function onMonthChanged({ month, year }) {
-  visibleMonth.value = month;
-  visibleYear.value = year;
-}*/
-
-function onPagesUpdate(pages: Page[] | any[]) {
-  if (!pages || !pages.length) return
-
-  // Use the first page (left-most / only pane)
-  const first = pages[0]
-
-  // Page.month is 1-based (Jan=1). Convert to 0-based JS month.
-  visibleMonth.value = (first.month ?? (first as any).month) - 1
-  visibleYear.value = first.year ?? (first as any).year
-
-  // debug - inspect the page object so you can confirm structure
-  console.log('v-calendar pages update:', pages)
-  console.log('visibleMonth (0-based):', visibleMonth.value, 'visibleYear:', visibleYear.value)
-}
-
-const eventsForSelected = computed(() => {
-  if (!selectedDate.value) return null // no day selected
-  const dayEvents = events.filter(
-    e => new Date(e.date).toDateString() === selectedDate.value!.toDateString()
-  )
-  return dayEvents // empty array if no events, array if events exist
-})
-
-const eventsForMonth = computed(() =>
-  events.filter(e => {
-    const d = new Date(e.date)
-    return d.getMonth() === visibleMonth.value && d.getFullYear() === visibleYear.value
-  })
-)
-
-const displayedEvents = computed(() => {
-  if (selectedDate.value === null) {
-    // no day selected → show all events for the month
-    return eventsForMonth.value
-  }
-
-  // day is selected
-  if (eventsForSelected.value && eventsForSelected.value.length > 0) {
-    return eventsForSelected.value
-  }
-
-  // day selected but no events
-  return []
-})
-
-const attributes = [
-  {
-    key: 'events',
-    highlight: 'teal',
-    dates: events.map(e => e.date),
-  }
-]
-
-useMeta({ title: `${appName} - Events` })
 </script>
 
 <template>
-  <PageResponsive style="margin: 8px">
+  <PageResponsive>
     <div>
       <!-- Top Bar -->
       <div class="hero-top-bar flex justify-left items-center">
         <q-btn flat round :icon="backIcon" @click="$router.back()" />
-        <h4 class="text-h6 hero-top-bar page-name">Calendar Of Events</h4>
+        <h4 class="text-h6 hero-top-bar page-name">Programs & Events</h4>
       </div>
-      <!-- Calendar Area -->
-      <div ref="calendarWrapper" class="calendar-month w-full">
-        <v-calendar
-          ref="calendar"
-          class="w-full"
-          @dayclick="onDayClick"
-          @update:pages="onPagesUpdate"
-          expanded
-          borderless
-          :masks="{ weekdays: 'WWW' }"
-          :attributes="attributes"
-        >
-          <template #day-header="{ weekday }">
-            <div class="my-weekday-header">
-              {{ ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][weekday] }}
-            </div>
-          </template>
-        </v-calendar>
-      </div>
-      <!-- Events List -->
-      <div class="q-ma-lg">
-        <div
-          v-for="event in displayedEvents"
-          :key="event.id"
-          class="event-list-item q-mt-md q-pa-md bg-primary text-white rounded-borders row items-center"
-        >
-          <!-- Left column: Date -->
-          <div class="col-3 flex flex-center">
-            <div class="column items-center">
-              <div class="event-day-text event-font">{{ new Date(event.date).toLocaleDateString('en-US', { weekday: 'short' }) }}</div>
-              <div class="event-day-text event-font">{{ new Date(event.date).getDate() }}</div>
-            </div>
-          </div>
+      <q-img
+        src="/public/images/events.png"
+        class="hero-img"
+        fit="cover"
+        position="center center"
+      />
+    </div>
 
-          <!-- Right column: Event details -->
-          <div class="col-9 column">
-            <div class="event-title event-font">{{ event.title }}</div>
-            <div class="event-subtext event-font">
-              <q-icon :name="scheduleTimeIcon"/>
-              {{ event.time }}
-            </div>
-            <div class="event-subtext event-font">
-              <q-icon :name="mapPinIcon"/>
-              {{ event.location }}
-            </div>
-          </div>
-        </div>
+    <!-- Info Card -->
+    <div class="info-card q-pa-lg">
+      <h3 class="info-card-header q-mb-sm">Programs & Events</h3>
+      <div>
+        <h4 class="info-subheader">
+          <router-link to="/calendar" class="text-primary">Calendar Of Events</router-link>
+        </h4>
+        <ul class="bullet-list">
+          <li class="bullet-point">For outdoor fun, check out these workshops, nature programs, family activities, and MORE!</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="info-subheader">Nature & History</h4>
+        <ul class="bullet-list">
+          <li class="bullet-point">Discover our programs for schools and libraries.</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="info-subheader">Activity Guide</h4>
+        <ul class="bullet-list">
+          <li class="bullet-point">Our Activity Guide is going green!</li>
+        </ul>
       </div>
     </div>
   </PageResponsive>
@@ -174,40 +56,43 @@ useMeta({ title: `${appName} - Events` })
 .page-name {
   padding-top: 4px;
 }
-.calendar-month {
-  margin-top: 5vh;
-  height: 33vh;
+.hero-img {
+  border-top-left-radius: 45px;
+  border-top-right-radius: 45px;
+  height: 318px;
+  opacity: 0.9;
 }
-.vc-title {
-  margin: 100px;
-  padding: 100px;
+.info-card {
+  height: 100%;
+  background: #e0f7f7;
+  border-top-left-radius: 45px;
+  border-top-right-radius: 45px;
+  transform: translateY(-60px);
 }
-.event-list-item {
-  padding: 3px;
-  border-radius: 24px;
-  height: 79px;
-}
-.event-font {
-  font-family: 'Monsterra', sans-serif;
+.info-card-header {
+  font-size: 30px;
   font-style: normal;
   font-weight: 600;
+  line-height: normal;
   text-transform: capitalize;
+  margin-bottom: 10px;
 }
-.event-title {
-  margin-top: 6px;
-  margin-bottom: 6px;
-  font-size: 12px;
+.info-subheader {
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
   line-height: normal;
+  text-transform: capitalize;
+  margin-top: 10px;
+  margin-bottom: 5px;
 }
-.event-day-text {
-  font-size: 14px;
-  line-height: normal;
+.bullet-list {
+  margin-top: 10px;
+  margin-bottom: 26px;
 }
-.event-subtext {
-  margin-top: 3px;
-  margin-bottom: 3px;
-  margin-left: 10px;
+.bullet-point {
   font-size: 10px;
+  font-style: normal;
   font-weight: 400;
   line-height: 12px; /* 120% */
 }
