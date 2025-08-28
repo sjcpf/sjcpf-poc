@@ -14,7 +14,7 @@ import PageResponsive from '@/components/page/PageResponsive.vue';
         <h4 class="text-h6 hero-top-bar page-name">Programs & Events</h4>
       </div>
       <q-img
-        src="/public/images/events.png"
+        src="/images/events.png"
         class="hero-img"
         fit="cover"
         position="center center"
