@@ -14,13 +14,23 @@ export const activities = [
   { name:'runing', label: 'Running Wild', img: '/images/run.png' }
 ]
 
+type Activity = {
+  title: string;
+  image: string;
+  phone: string;
+  location: string;
+  details: string[];
+  description: string;
+  documents: { label: string; url: string }[];
+};
+
 // Mock data loader (replace with API/store later)
-export const activityData = {
+export const activityData: Record<string, Activity> = {
   discGolf: {
     title: 'Disc Golf',
     image: '/images/disc.png',
     phone: '574-674-9765',
-    locations: 'Bendix Woods County Park',
+    location: 'Bendix Woods County Park',
     details: [
       'Open Daily, Pro Shop Hours Vary',
       'Ferrettie / Baugo Creek Co. Park; Pro Shop Located In Gate House',
@@ -35,5 +45,5 @@ export const activityData = {
       { label: 'Disc Golf Map', url: '#' },
       { label: 'Disc Golf Score Card', url: '#' }
     ]
-  }
+  },
 }

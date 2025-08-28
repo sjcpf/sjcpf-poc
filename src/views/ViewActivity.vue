@@ -6,8 +6,9 @@ import { backIcon, callIcon, mapPinIcon, shareIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 
 const route = useRoute()
-console.log(activityData[route.params.activity]);
-const activity = ref(activityData[route.params.activity] || {})
+const key = route.params.activity as string;
+console.log(activityData[key]);
+const activity = ref(activityData[key] || {})
 </script>
 
 <template>
@@ -34,9 +35,9 @@ const activity = ref(activityData[route.params.activity] || {})
           <q-icon :name="callIcon" size="20px" class="q-mr-sm"/>
           <span>{{ activity.phone }}</span>
         </div>
-        <div v-if="activity.locations" class="row items-center">
+        <div v-if="activity.location" class="row items-center">
           <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
-          <span>{{ activity.locations }}</span>
+          <span>{{ activity.location }}</span>
         </div>
       </div>
 
