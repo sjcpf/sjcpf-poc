@@ -13,7 +13,7 @@ type Park = {
   city: string;
   state: string;
   details: string[];
-  activities: Activity[];
+  activities: number[];
   description: string;
   documents: { label: string; url: string }[];
 };
@@ -119,40 +119,41 @@ export const parks: Park[] = [
   },
 ];
 
-type Activity = {
-  name: string;
+type ActivityType = {
   label: string;
   img: string;
 }
 
-export const activities: Activity[] = [
-  { name:'biking', label: 'Bike Trails', img: '/images/bike.png' },
-  { name:'canoeing', label: 'Canoe Rentals', img: '/images/canoe.png' },
-  { name:'discGolf', label: 'Disc Golf', img: '/images/disc.png' },
-  { name:'geoCache', label: 'Geocaching', img: '/images/geo.png' },
-  { name:'hiking', label: 'Hiking Trails', img: '/images/hike.png' },
-  { name:'orienteering', label: 'Orienteering', img: '/images/orient.png' },
-  { name:'playGround', label: 'Playgrounds', img: '/images/play.png' },
-  { name:'runing', label: 'Running Wild', img: '/images/run.png' }
-]
+export const activityTypes: Record<string, ActivityType> = {
+  biking: { label: 'Bike Trails', img: '/images/bike.png' },
+  canoeing: { label: 'Canoe Rentals', img: '/images/canoe.png' },
+  discGolf: { label: 'Disc Golf', img: '/images/disc.png' },
+  geocaching: { label: 'Geocaching', img: '/images/geo.png' },
+  hiking: { label: 'Hiking Trails', img: '/images/hike.png' },
+  orienteering: { label: 'Orienteering', img: '/images/orient.png' },
+  playground: { label: 'Playgrounds', img: '/images/play.png' },
+  running: { label: 'Running Wild', img: '/images/run.png' }
+}
 
-type ActivityData = {
-  title: string;
-  image: string;
-  phone: string;
-  location: string;
+
+// Location or phone being set overrides the default park phone and location that would be inherited from the park instance the event is at
+type Activity = {
+  id: number;
+  park: number;
+  activityType: string;
+  phone?: string;
+  location?: string;
   details: string[];
   description: string;
   documents: { label: string; url: string }[];
 };
 
 // Mock data loader (replace with API/store later)
-export const activityData: Record<string, ActivityData> = {
-  discGolf: {
-    title: 'Disc Golf',
-    image: '/images/disc.png',
-    phone: '574-674-9765',
-    location: 'Bendix Woods County Park',
+export const activities: Activity[] = [
+  {
+    id: 0,
+    park: 0,
+    activityType: 'discGolf',
     details: [
       'Open Daily, Pro Shop Hours Vary',
       'Ferrettie / Baugo Creek Co. Park; Pro Shop Located In Gate House',
@@ -168,11 +169,10 @@ export const activityData: Record<string, ActivityData> = {
       { label: 'Disc Golf Score Card', url: '#' }
     ]
   },
-  biking: {
-    title: 'Bike Trails',
-    image: '/images/bike.png',
-    phone: '574-674-9765',
-    location: 'Bendix Woods County Park',
+  {
+    id: 1,
+    park: 4,
+    activityType: 'biking',
     details: [
       'Open Daily, Sunrise to Sunset',
       'Several trails ranging from beginner to advanced',
@@ -185,14 +185,13 @@ export const activityData: Record<string, ActivityData> = {
       { label: 'Bike Trail Map', url: '#' }
     ]
   },
-  canoeing: {
-    title: 'Canoe Rentals',
-    image: '/images/canoe.png',
-    phone: '574-674-9765',
-    location: 'Ferrettie / Baugo Creek County Park',
+  {
+    id: 2,
+    park: 3,
+    activityType: 'canoeing',
     details: [
       'Available May through September',
-      'Rental Hours: 9 A.M. – 6 P.M.',
+      'Rental Hours: 9 A.M. - 6 P.M.',
       'Life jackets provided',
       'Reservations recommended for groups'
     ],
@@ -202,11 +201,10 @@ export const activityData: Record<string, ActivityData> = {
       { label: 'Canoe Rental Info', url: '#' }
     ]
   },
-  geoCache: {
-    title: 'Geocaching',
-    image: '/images/geo.png',
-    phone: '574-674-9765',
-    location: 'Various Parks in County',
+  {
+    id: 3,
+    park: 1,
+    activityType: 'geocaching',
     details: [
       'Self-guided activity, open year-round',
       'Bring a GPS device or smartphone with geocaching app',
@@ -218,11 +216,10 @@ export const activityData: Record<string, ActivityData> = {
       { label: 'Geocaching Tips', url: '#' }
     ]
   },
-  hiking: {
-    title: 'Hiking Trails',
-    image: '/images/hike.png',
-    phone: '574-674-9765',
-    location: 'All County Parks',
+  {
+    id: 4,
+    park: 0,
+    activityType: 'hiking',
     details: [
       'Trails open daily from sunrise to sunset',
       'Variety of trails from easy walks to challenging hikes',
@@ -234,11 +231,10 @@ export const activityData: Record<string, ActivityData> = {
       { label: 'Trail Map', url: '#' }
     ]
   },
-  orienteering: {
-    title: 'Orienteering',
-    image: '/images/orient.png',
-    phone: '574-674-9765',
-    location: 'Bendix Woods County Park',
+  {
+    id: 5,
+    park: 0,
+    activityType: 'orienteering',
     details: [
       'Equipment available at park office',
       'Self-guided or group courses',
@@ -250,11 +246,10 @@ export const activityData: Record<string, ActivityData> = {
       { label: 'Orienteering Map', url: '#' }
     ]
   },
-  playGround: {
-    title: 'Playgrounds',
-    image: '/images/play.png',
-    phone: '574-674-9765',
-    location: 'All County Parks',
+  {
+    id: 6,
+    park: 6,
+    activityType: 'playground',
     details: [
       'Open daily, sunrise to sunset',
       'Safe for children of all ages',
@@ -264,11 +259,10 @@ export const activityData: Record<string, ActivityData> = {
       'Children can enjoy a variety of playgrounds throughout the county parks, suitable for all ages.',
     documents: []
   },
-  runing: {
-    title: 'Running Trails',
-    image: '/images/run.png',
-    phone: '574-674-9765',
-    location: 'Bendix Woods County Park',
+  {
+    id: 7,
+    park: 2,
+    activityType: 'running',
     details: [
       'Open Daily, sunrise to sunset',
       'Trails vary in length and difficulty',
@@ -280,34 +274,42 @@ export const activityData: Record<string, ActivityData> = {
       { label: 'Running Trail Map', url: '#' }
     ]
   }
-};
+];
 
-export const events = [
+type CalendarEvent = {
+  id: number;
+  start: string;
+  end: string;
+  title: string;
+  park: number;
+}
+
+export const events: CalendarEvent[] = [
   // July
-  { id: 1, date: '2025-07-05', title: 'Summer Nature Hike', time: '9:00 AM – 11:00 AM', location: 'Pine Trail' },
-  { id: 2, date: '2025-07-05', title: 'Junior Explorer Club', time: '1:00 PM – 3:00 PM', location: 'Oak Grove' },
-  { id: 3, date: '2025-07-12', title: 'Birdwatching Workshop', time: '7:30 AM – 10:00 AM', location: 'Oak Grove' },
-  { id: 4, date: '2025-07-12', title: 'Evening Campfire', time: '8:00 PM – 10:00 PM', location: 'Red Barn' },
-  { id: 5, date: '2025-07-18', title: 'Kayaking 101', time: '1:00 PM – 4:00 PM', location: 'Lakeview Dock' },
-  { id: 6, date: '2025-07-22', title: 'Stargazing Night', time: '8:00 PM – 10:30 PM', location: 'Red Barn' },
-  { id: 7, date: '2025-07-29', title: 'Family Picnic Day', time: '11:00 AM – 3:00 PM', location: 'Harvest Room' },
+  { id: 1, start: '2025-07-05T09:00:00', end: '2025-07-05T12:00:00', title: 'Summer Nature Hike', park: 0 },
+  { id: 2, start: '2025-07-05T13:15:00', end: '2025-07-05T15:15:00', title: 'Junior Explorer Club', park: 0 },
+  { id: 3, start: '2025-07-12T08:30:00', end: '2025-07-12T11:30:00', title: 'Birdwatching Workshop', park: 5 },
+  { id: 4, start: '2025-07-12T19:00:00', end: '2025-07-12T21:00:00', title: 'Evening Campfire', park: 0 },
+  { id: 5, start: '2025-07-18T10:45:00', end: '2025-07-18T13:45:00', title: 'Kayaking 101', park: 3 },
+  { id: 6, start: '2025-07-22T21:00:00', end: '2025-07-22T23:45:00', title: 'Stargazing Night', park: 1 },
+  { id: 7, start: '2025-07-29T11:30:00', end: '2025-07-29T16:30:00', title: 'Family Picnic Day', park: 6 },
 
   // August
-  { id: 8, date: '2025-08-02', title: 'Yoga in the Park', time: '6:30 AM – 8:00 AM', location: 'Oak Grove' },
-  { id: 9, date: '2025-08-09', title: '5K Trail Run', time: '8:30 AM – 12:00 PM', location: 'Red Barn' },
-  { id: 10, date: '2025-08-09', title: 'Nature Journaling', time: '1:00 PM – 3:00 PM', location: 'Meadow Field' },
-  { id: 11, date: '2025-08-16', title: '3K Fun Walk', time: '9:00 AM – 10:30 AM', location: 'Harvest Room' },
-  { id: 12, date: '2025-08-16', title: 'Wildflower Photography', time: '11:00 AM – 2:00 PM', location: 'Meadow Field' },
-  { id: 13, date: '2025-08-21', title: 'Evening Campfire Stories', time: '7:00 PM – 9:30 PM', location: 'Red Barn' },
-  { id: 14, date: '2025-08-30', title: 'Fall Gardening Workshop', time: '10:00 AM – 1:00 PM', location: 'Oak Grove' },
+  { id: 8, start: '2025-08-02T07:15:00', end: '2025-08-02T08:30:00', title: 'Yoga in the Park', park: 6 },
+  { id: 9, start: '2025-08-09T09:00:00', end: '2025-08-09T10:15:00', title: '5K Trail Run', park: 5 },
+  { id: 10, start: '2025-08-09T13:30:00', end: '2025-08-09T16:00:00', title: 'Nature Journaling', park: 2 },
+  { id: 11, start: '2025-08-16T08:00:00', end: '2025-08-16T09:30:00', title: '3K Fun Walk', park: 1 },
+  { id: 12, start: '2025-08-16T14:15:00', end: '2025-08-16T17:15:00', title: 'Wildflower Photography', park: 2 },
+  { id: 13, start: '2025-08-21T18:45:00', end: '2025-08-21T21:00:00', title: 'Evening Campfire Stories', park: 0 },
+  { id: 14, start: '2025-08-30T10:00:00', end: '2025-08-30T15:00:00', title: 'Fall Gardening Workshop', park: 1 },
 
   // September
-  { id: 15, date: '2025-09-03', title: 'Guided Nature Walk', time: '10:00 AM – 12:00 PM', location: 'Oak Grove' },
-  { id: 16, date: '2025-09-03', title: 'Junior Ranger Program', time: '1:00 PM – 3:00 PM', location: 'Harvest Room' },
-  { id: 17, date: '2025-09-10', title: 'Photography Basics', time: '9:00 AM – 11:30 AM', location: 'Meadow Field' },
-  { id: 18, date: '2025-09-10', title: 'Evening Hike', time: '6:00 PM – 8:00 PM', location: 'Pine Trail' },
-  { id: 19, date: '2025-09-15', title: 'Fall Foliage Hike', time: '10:00 AM – 1:00 PM', location: 'Red Barn' },
-  { id: 20, date: '2025-09-19', title: 'Outdoor Art Workshop', time: '2:00 PM – 5:00 PM', location: 'Oak Grove' },
-  { id: 21, date: '2025-09-26', title: 'Canoe Exploration', time: '9:00 AM – 12:00 PM', location: 'Lakeview Dock' },
-  { id: 22, date: '2025-09-26', title: 'Birdwatching Basics', time: '1:00 PM – 3:00 PM', location: 'Oak Grove' },
+  { id: 15, start: '2025-09-03T09:00:00', end: '2025-09-03T12:00:00', title: 'Guided Nature Walk', park: 5 },
+  { id: 16, start: '2025-09-03T13:30:00', end: '2025-09-03T15:00:00', title: 'Junior Ranger Program', park: 0 },
+  { id: 17, start: '2025-09-10T10:15:00', end: '2025-09-10T13:15:00', title: 'Photography Basics', park: 6 },
+  { id: 18, start: '2025-09-10T18:00:00', end: '2025-09-10T20:30:00', title: 'Evening Hike', park: 4 },
+  { id: 19, start: '2025-09-15T08:45:00', end: '2025-09-15T12:00:00', title: 'Fall Foliage Hike', park: 3 },
+  { id: 20, start: '2025-09-19T09:00:00', end: '2025-09-20T17:00:00', title: 'Outdoor Art Workshop', park: 6 }, // multi-day
+  { id: 21, start: '2025-09-26T08:30:00', end: '2025-09-26T14:00:00', title: 'Canoe Exploration', park: 3 },
+  { id: 22, start: '2025-09-26T15:45:00', end: '2025-09-26T18:15:00', title: 'Birdwatching Basics', park: 1 },
 ]

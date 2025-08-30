@@ -1,14 +1,22 @@
 <script lang='ts' setup>
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
-import { activityTypes, activities, parks } from '@/shared/constants'
+import { activities, parks } from '@/shared/constants'
 import { backIcon, callIcon, mapPinIcon, shareIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 
 const route = useRoute()
-const key = route.params.activity as string;
-console.log(activityTypes[key]);
-const activity = ref(activityTypes[key] || {})
+const key1 = route.params.park as string;
+// console.log(parks.find()); //TODO: Find park from array using the park param value
+const key2 = route.params.activity as string;
+console.log(activities[key2]);
+const activity = ref(activities[key2] || {})
+
+//TODOs:
+/*
+1. Get phone from park for activity.
+2. Get
+*/
 </script>
 
 <template>

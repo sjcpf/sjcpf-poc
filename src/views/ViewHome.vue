@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import PageResponsive from '@/components/page/PageResponsive.vue'
-import { activities, appName } from '@/shared/constants'
+import { activityTypes, appName } from '@/shared/constants'
 import { RouteNameEnum } from '@/shared/enums'
 // import { RouteNameEnum } from '@/shared/enums'
 import { searchIcon } from '@/shared/icons'
@@ -30,13 +30,13 @@ const search = ref('')
         <q-item-label class="text-h6 q-pt-lg q-mb-lg">Activities</q-item-label>
         <div class="row q-gutter-y-sm q-col-gutter-md">
           <div
-            v-for="activity in activities"
-            :key="activity.label"
+            v-for="(activity, key) in activityTypes"
+            :key="key"
             flat
             class="flex flex-center column col-3"
             @click="$router.push({
               name: RouteNameEnum.ACTIVITIES,
-              params: { activity: activity.name }
+              params: { activity: key }
             })"
           >
             <q-img :src="activity.img" class="activity-img rounded-borders" />
