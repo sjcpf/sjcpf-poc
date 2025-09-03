@@ -1,22 +1,30 @@
 <script lang='ts' setup>
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
-import { activities, parks } from '@/shared/constants'
+import { activities, activityTypes, parks } from '@/shared/constants'
+import type { Activity, ActivityType, Park } from '@/shared/constants';
 import { backIcon, callIcon, mapPinIcon, shareIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 
-const route = useRoute()
-const key1 = route.params.park as string;
-// console.log(parks.find()); //TODO: Find park from array using the park param value
-const key2 = route.params.activity as string;
-console.log(activities[key2]);
-const activity = ref(activities[key2] || {})
+const route = useRoute();
 
-//TODOs:
-/*
-1. Get phone from park for activity.
-2. Get
-*/
+const park = ref<Park | undefined>(
+  parks.find(p => p.id === Number(route.params.park))
+);
+
+const activity = ref<Activity | undefined>(
+  activities.find(
+    a => a.id === Number(route.params.activity) && a.park === park.value?.id
+  )
+);
+
+const activityType = ref<ActivityType | undefined>(
+  activity.value ? activityTypes[activity.value.activityType] : undefined
+);
+
+console.log("Park:", park?.value);
+console.log("Activity:", activity?.value);
+console.log("ActivityType:", activityType?.value);
 </script>
 
 <template>
@@ -25,10 +33,11 @@ const activity = ref(activities[key2] || {})
       <!-- Top Bar -->
       <div class="hero-top-bar flex justify-left items-center">
         <q-btn flat round :icon="backIcon" @click="$router.back()" />
-        <h4 class="text-h6 hero-top-bar page-name">{{ activity?.title }}</h4>
+        <h4 class="text-h6 hero-top-bar page-name">{{ activityType?.label }}</h4>
       </div>
       <q-img
-        :src="activity.image"
+        v-if="activityType"
+        :src="activityType?.img"
         class="hero-img"
         fit="cover"
         position="center center"
@@ -37,8 +46,8 @@ const activity = ref(activities[key2] || {})
 
     <!-- Info Card -->
     <div class="info-card q-pa-lg">
-      <h3 class="text-h5 q-mb-sm info-card-header">{{ activity.title }}</h3>
-      <div v-if="activity.phone || activity.location" class="contact q-mb-md">
+      <h3 class="text-h5 q-mb-sm info-card-header">{{ activityType?.label }} At {{ park?.name }}</h3>
+      <div v-if="activity?.phone || activity?.location" class="contact q-mb-md">
         <div v-if="activity.phone" class="row items-center q-mb-xs">
           <q-icon :name="callIcon" size="20px" class="q-mr-sm"/>
           <span>{{ activity.phone }}</span>
@@ -50,23 +59,23 @@ const activity = ref(activities[key2] || {})
       </div>
 
       <!-- Activity Details -->
-      <div v-if="activity.details" class="program-details q-mb-md">
+      <div v-if="activity?.details" class="program-details q-mb-md">
         <h5 class="text-subtitle1 q-mb-sm">Program Details</h5>
         <ul>
-          <li v-for="(detail, index) in activity.details" :key="index">
+          <li v-for="(detail, index) in activity?.details" :key="index">
             {{ detail }}
           </li>
         </ul>
       </div>
 
       <!-- Extra Text -->
-      <p v-if="activity.description" class="q-mb-md">{{ activity.description }}</p>
+      <p v-if="activity?.description" class="q-mb-md">{{ activity?.description }}</p>
 
       <!-- Useful Documents -->
-      <div v-if="activity.documents && activity.documents.length" class="documents q-mb-md">
+      <div v-if="activity?.documents && activity?.documents?.length" class="documents q-mb-md">
         <h5 class="text-subtitle1 q-mb-sm">Useful Documents</h5>
         <ul>
-          <li v-for="doc in activity.documents" :key="doc.label">
+          <li v-for="doc in activity?.documents" :key="doc.label">
             <a :href="doc.url" target="_blank">{{ doc.label }}</a>
           </li>
         </ul>

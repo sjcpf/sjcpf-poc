@@ -3,7 +3,7 @@ export const appName = 'SJCPF'
 export const appDescription = `
 ${appName} provides information about parks, trails, and events in St. Joseph County.`
 
-type Park = {
+export type Park = {
   id: number;
   name: string
   image: string;
@@ -119,7 +119,7 @@ export const parks: Park[] = [
   },
 ];
 
-type ActivityType = {
+export type ActivityType = {
   label: string;
   img: string;
 }
@@ -135,9 +135,8 @@ export const activityTypes: Record<string, ActivityType> = {
   running: { label: 'Running Wild', img: '/images/run.png' }
 }
 
-
 // Location or phone being set overrides the default park phone and location that would be inherited from the park instance the event is at
-type Activity = {
+export type Activity = {
   id: number;
   park: number;
   activityType: string;

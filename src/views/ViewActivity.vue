@@ -1,14 +1,21 @@
 <script lang='ts' setup>
 import { useRoute } from 'vue-router'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { activityTypes, activities, parks } from '@/shared/constants'
-import { backIcon, callIcon, mapPinIcon, shareIcon } from '@/shared/icons';
+import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 
 const route = useRoute()
-const key = route.params.activity as string;
-console.log(activityTypes[key]);
-const activity = ref(activityTypes[key] || {})
+
+const activityTypeKey = route.params.activity as string;
+const activityType = ref(activityTypes[activityTypeKey]);
+
+const filteredActivities = computed(() => {
+  if (!activityType.value) return [];
+  return activities.filter(a => a.activityType === activityTypeKey);
+});
+
+const getPark = (parkId: number) => parks.find(p => p.id === parkId);
 </script>
 
 <template>
@@ -17,10 +24,11 @@ const activity = ref(activityTypes[key] || {})
       <!-- Top Bar -->
       <div class="hero-top-bar flex justify-left items-center">
         <q-btn flat round :icon="backIcon" @click="$router.back()" />
-        <h4 class="text-h6 hero-top-bar page-name">{{ activity?.title }}</h4>
+        <h4 class="text-h6 hero-top-bar page-name">{{ activityType?.label }}</h4>
       </div>
       <q-img
-        :src="activity.image"
+        v-if="activityType"
+        :src="activityType?.img"
         class="hero-img"
         fit="cover"
         position="center center"
@@ -29,37 +37,19 @@ const activity = ref(activityTypes[key] || {})
 
     <!-- Info Card -->
     <div class="info-card q-pa-lg">
-      <h3 class="text-h5 q-mb-sm info-card-header">{{ activity.title }}</h3>
-      <div v-if="activity.phone || activity.location" class="contact q-mb-md">
-        <div v-if="activity.phone" class="row items-center q-mb-xs">
-          <q-icon :name="callIcon" size="20px" class="q-mr-sm"/>
-          <span>{{ activity.phone }}</span>
-        </div>
-        <div v-if="activity.location" class="row items-center">
-          <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
-          <span>{{ activity.location }}</span>
-        </div>
-      </div>
-
-      <!-- Activity Details -->
-      <div v-if="activity.details" class="program-details q-mb-md">
-        <h5 class="text-subtitle1 q-mb-sm">Program Details</h5>
+      <h3 class="text-h5 q-mb-sm info-card-header">{{ activityType?.label }}</h3>
+      <!-- List of Parks -->
+      <div class="q-pa-lg">
+        <h5 class="text-subtitle1 q-mb-sm">Found at:</h5>
         <ul>
-          <li v-for="(detail, index) in activity.details" :key="index">
-            {{ detail }}
-          </li>
-        </ul>
-      </div>
-
-      <!-- Extra Text -->
-      <p v-if="activity.description" class="q-mb-md">{{ activity.description }}</p>
-
-      <!-- Useful Documents -->
-      <div v-if="activity.documents && activity.documents.length" class="documents q-mb-md">
-        <h5 class="text-subtitle1 q-mb-sm">Useful Documents</h5>
-        <ul>
-          <li v-for="doc in activity.documents" :key="doc.label">
-            <a :href="doc.url" target="_blank">{{ doc.label }}</a>
+          <li v-for="act in filteredActivities" :key="act.id" class="q-mb-sm">
+            <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
+            <RouterLink
+              :to="`/parks/${act.park}/activities/${act.id}`"
+              class="text-primary"
+            >
+              {{ getPark(act.park)?.name }}
+            </RouterLink>
           </li>
         </ul>
       </div>

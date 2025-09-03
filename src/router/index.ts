@@ -49,8 +49,8 @@ const router = createRouter({
         },
         {
           path: '/parks/:park/activities/:activity',
-          name: RouteNameEnum.ACTIVITIES,
-          component: () => import('@/views/ViewActivity.vue'),
+          name: RouteNameEnum.PARK_ACTIVITY,
+          component: () => import('@/views/ViewParkActivity.vue'),
         },
         {
           path: '/activities/:activity',
