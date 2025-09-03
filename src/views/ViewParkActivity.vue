@@ -37,7 +37,7 @@ console.log("ActivityType:", activityType?.value);
       </div>
       <q-img
         v-if="activityType"
-        :src="activityType?.img"
+        :src="activity?.img ?? activityType?.img"
         class="hero-img"
         fit="cover"
         position="center center"
@@ -46,7 +46,8 @@ console.log("ActivityType:", activityType?.value);
 
     <!-- Info Card -->
     <div class="info-card q-pa-lg">
-      <h3 class="text-h5 q-mb-sm info-card-header">{{ activityType?.label }} At {{ park?.name }}</h3>
+      <h3 class="text-h5 q-mb-sm info-card-header">{{ activityType?.label }} at</h3>
+      <h4 class="text-h5 q-mb-sm info-card-subheader">{{ park?.name }}</h4>
       <div v-if="activity?.phone || activity?.location" class="contact q-mb-md">
         <div v-if="activity.phone" class="row items-center q-mb-xs">
           <q-icon :name="callIcon" size="20px" class="q-mr-sm"/>
@@ -117,6 +118,15 @@ console.log("ActivityType:", activityType?.value);
 }
 .info-card-header {
   font-size: 30px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  /*text-transform: capitalize;*/
+}
+.info-card-subheader {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 26px;
   font-style: normal;
   font-weight: 600;
   line-height: normal;

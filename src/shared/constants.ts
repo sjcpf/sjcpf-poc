@@ -140,6 +140,7 @@ export type Activity = {
   id: number;
   park: number;
   activityType: string;
+  img?: string;
   phone?: string;
   location?: string;
   details: string[];
