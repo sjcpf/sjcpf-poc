@@ -3,11 +3,13 @@
 import { backIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 import { RouteNameEnum } from '@/shared/enums';
-import { parks } from '@/shared/constants';
+import { appName, parks } from '@/shared/constants';
 import { ref } from 'vue';
 import { useGeolocation } from '@/utils/useGeolocation';
 import { headingDistanceTo } from 'geolocation-utils';
+import { useMeta } from 'quasar';
 
+useMeta({ title: `${appName} - Nearby Parks` })
 const { location } = useGeolocation();
 
 const sheetY = ref(0) // drag offset
