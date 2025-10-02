@@ -1,6 +1,8 @@
 # SJCPF POC
 
 A simple public access web app for the St. Joseph County parks foundation.
+<br><br>
+The current build on Main is visible at https://poc.exploresjcparks.org/home
 
 ## Technologies used:
 1. Vite
