@@ -36,28 +36,32 @@ useMeta({ title: `${appName} - Parks` })
 </template>
 
 <style scoped>
-.hero-top-bar {
-  height: 40px;
-  margin: 0;
-}
-.page-name {
-  padding-top: 4px;
-}
-.park-image-button {
-  border-radius: 24px;
-  height: 159px;
-}
-.image-button-label {
-  margin: 1px;
-  font-size: 13px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-  text-transform: capitalize;
-}
-.image-button-city-state {
-  margin: 1px;
-  font-size: 10px;
-  font-weight: 400;
-}
+  .hero-top-bar {
+    height: 40px;
+    margin: 0;
+  }
+
+  .page-name {
+    padding-top: 4px;
+  }
+
+  .park-image-button {
+    border-radius: 24px;
+    height: 159px;
+  }
+
+  .image-button-label {
+    margin: 1px;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+    text-transform: capitalize;
+  }
+
+  .image-button-city-state {
+    margin: 1px;
+    font-size: 10px;
+    font-weight: 400;
+  }
 </style>

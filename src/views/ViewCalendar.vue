@@ -1,12 +1,13 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
 import PageResponsive from '@/components/page/PageResponsive.vue'
-import { appName } from '@/shared/constants'
+import { appName, parks } from '@/shared/constants'
 import { backIcon, mapPinIcon, scheduleTimeIcon } from '@/shared/icons'
 import { useMeta } from 'quasar'
 import { ref, computed, onMounted } from 'vue'
 import { events } from '@/shared/constants'
 import type { Page } from 'v-calendar/dist/types/src/utils/page.js'
+import type { CalendarEvent } from '@/shared/constants'
 import type { CalendarComponent } from 'v-calendar/dist/types/tests/unit/specs/utils.js'
 
 const calendarWrapper = ref<HTMLElement | null>(null)
@@ -69,14 +70,14 @@ function onPagesUpdate(pages: Page[] | any[]) {
 const eventsForSelected = computed(() => {
   if (!selectedDate.value) return null // no day selected
   const dayEvents = events.filter(
-    e => new Date(e.date).toDateString() === selectedDate.value!.toDateString()
+    e => new Date(e.start).toDateString() === selectedDate.value!.toDateString()
   )
   return dayEvents // empty array if no events, array if events exist
 })
 
 const eventsForMonth = computed(() =>
   events.filter(e => {
-    const d = new Date(e.date)
+    const d = new Date(e.start)
     return d.getMonth() === visibleMonth.value && d.getFullYear() === visibleYear.value
   })
 )
@@ -96,13 +97,43 @@ const displayedEvents = computed(() => {
   return []
 })
 
+function toLocalDateOnly(d: string | Date) {
+  const x = new Date(d)
+  return new Date(x.getFullYear(), x.getMonth(), x.getDate()) // local midnight
+}
+
+function buildDatesArray(events: CalendarEvent[]) {
+  return events.flatMap(ev => {
+    const start = toLocalDateOnly(ev.start)
+    const end = ev.end ? toLocalDateOnly(ev.end) : start
+
+    // same day -> single Date
+    if (start.getTime() === end.getTime()) {
+      return [start]
+    }
+
+    return [start, end]
+  })
+}
+
+const datesForAttributes = buildDatesArray(events)
+
 const attributes = [
   {
     key: 'events',
     highlight: 'teal',
-    dates: events.map(e => e.date),
-  }
+    dates: datesForAttributes,
+  },
 ]
+
+function formatAMPM(date: Date): string {
+  let hours = date.getHours();
+  const minutes = date.getMinutes();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12; // converts 0 → 12
+  const minutesStr = minutes.toString().padStart(2, '0'); // keep leading zero for minutes
+  return `${hours}:${minutesStr} ${ampm}`;
+}
 
 useMeta({ title: `${appName} - Events` })
 </script>
@@ -142,28 +173,52 @@ useMeta({ title: `${appName} - Events` })
           class="event-list-item q-mt-md q-pa-md bg-primary text-white rounded-borders row items-center"
         >
           <!-- Left column: Date -->
-          <div class="col-2 flex flex-center">
+          <div class="col-3 flex flex-center">
+            <!-- Start Day -->
             <div class="column items-center">
-              <div class="event-day-text event-font">{{ new Date(event.date).toLocaleDateString('en-US', { weekday: 'short' }) }}</div>
-              <div class="event-day-text event-font">{{ new Date(event.date).getDate() }}</div>
+              <div class="event-day-text event-font">
+                {{ new Date(event.start).toLocaleDateString('en-US', { weekday: 'short' }) }}
+              </div>
+              <div class="event-day-text event-font">
+                {{ new Date(event.start).getDate() }}
+              </div>
             </div>
+
+            <!-- Dash + End Day (only if different date) -->
+            <template v-if="new Date(event.end).toDateString() !== new Date(event.start).toDateString()">
+              <span class="mx-1 date-dash">-</span>
+              <div class="column items-center">
+                <div class="event-day-text event-font">
+                  {{ new Date(event.end).toLocaleDateString('en-US', { weekday: 'short' }) }}
+                </div>
+                <div class="event-day-text event-font">
+                  {{ new Date(event.end).getDate() }}
+                </div>
+              </div>
+            </template>
           </div>
 
           <!-- Right column: Event details -->
-          <div class="col-10 column">
+          <div class="col-9 column">
             <div class="event-title event-font">{{ event.title }}</div>
-              <div class="event-subtext event-font">
+              <div class="event-details event-subtext event-font">
                 <q-icon :name="scheduleTimeIcon"/>
-                {{ event.time }}
+                {{ formatAMPM(new Date(event.start)) }} -
+                {{ formatAMPM(new Date(event.end)) }}
               </div>
-              <div class="event-subtext event-font">
+              <div class="event-details event-subtext event-font">
                 <q-icon :name="mapPinIcon"/>
-                {{ event.location }}
+                <RouterLink
+                  :to="`/parks/${event.park}`"
+                  class="event-font park-link"
+                >
+                  {{ parks.find(park => park.id === event.park)?.name }}
+                </RouterLink>
               </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
   </PageResponsive>
 </template>
 
@@ -212,4 +267,14 @@ useMeta({ title: `${appName} - Events` })
   font-weight: 400;
   line-height: 12px; /* 120% */
 }
+.park-link {
+  color: #FFF;
+}
+.date-dash {
+  margin-left: 3px;
+  margin-right: 3px;
+}
+/*.event-details {
+  margin-left: 20px;
+}*/
 </style>

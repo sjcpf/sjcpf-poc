@@ -13,8 +13,10 @@
 export enum RouteNameEnum {
   MENU_LAYOUT = 'MenuLayout',
   HOME = 'Home',
+  DONATE = 'Donate',
   EVENTS = 'Events',
   CALENDAR = 'Calendar',
+  NEARBY = 'Nearby',
   PARKS = 'Parks',
   PARK_INFORMATION = 'ParkInformation',
   PARK_ACTIVITY = 'ParkActivity',

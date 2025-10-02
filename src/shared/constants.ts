@@ -1,3 +1,5 @@
+import type { Location } from "geolocation-utils";
+
 export const appName = 'SJCPF'
 
 export const appDescription = `
@@ -8,7 +10,7 @@ export type Park = {
   name: string
   image: string;
   phone: string;
-  location: string;
+  location: Location;
   address: string;
   city: string;
   state: string;
@@ -24,7 +26,7 @@ export const parks: Park[] = [
     name: 'Bendix Woods',
     image: '/images/parks/bendix_woods.webp',
     phone: '(574) 654-3155',
-    location: '+41.66972-086.48833',
+    location: {lat: 41.66972, lon: -86.48833 },
     address: '56960 Timothy Road New Carlisle, IN 46552-9522',
     city: 'New Carlisle',
     state: 'IN',
@@ -38,7 +40,7 @@ export const parks: Park[] = [
     name: 'Beverly D. Crone Restoration Area',
     image: '/images/parks/crone_restore.webp',
     phone: '(574) 277-4828',
-    location: '+41.61899-086.27755',
+    location: {lat: 41.61899, lon: -86.27755 },
     address: 'Jackson Road and Linden Road South Bend, IN 46614',
     city: 'South Bend',
     state: 'IN',
@@ -52,7 +54,7 @@ export const parks: Park[] = [
     name: 'Chamberlain Lake',
     image: '/images/parks/chamberlain_lake.webp',
     phone: '(574) 654-3155',
-    location: '+41.64723-086.36945',
+    location: { lat: 41.64723, lon: -86.36945 },
     address: '58111 Crumstown Highway South Bend, IN 46619',
     city: 'South Bend',
     state: 'IN',
@@ -66,7 +68,7 @@ export const parks: Park[] = [
     name: 'Ferrettie / Baugo Creek',
     image: '/images/parks/baugo_creek.webp',
     phone: '(574) 674-9765',
-    location: '+41.66589-086.06142',
+    location: { lat: 41.66589, lon: -86.06142 },
     address: '57057 Ash Road Osceola, IN 46561',
     city: 'Osceola',
     state: 'IN',
@@ -80,7 +82,7 @@ export const parks: Park[] = [
     name: 'LaSalle Trail',
     image: '/images/parks/lasalle_trail.webp',
     phone: '(574) 277-4828',
-    location: '+41.72680-086.25288',
+    location: { lat: 41.72680, lon: -86.25288 },
     address: '19701 Cleveland Rd South Bend, IN 46637',
     city: 'South Bend',
     state: 'IN',
@@ -94,7 +96,7 @@ export const parks: Park[] = [
     name: 'Spicer Lake',
     image: '/images/parks/spicer_lake.webp',
     phone: '(574) 654-3155',
-    location: '+41.75326-086.52426',
+    location: { lat: 41.75326, lon: -86.52426 },
     address: '50840 County Line Road New Carlisle, IN 46552-4564',
     city: 'New Carlisle',
     state: 'IN',
@@ -108,7 +110,7 @@ export const parks: Park[] = [
     name: `St. Patrick's County Park`,
     image: '/images/parks/st_patricks.webp',
     phone: '(574) 277-4828',
-    location: '+41.75547-086.26585',
+    location: { lat: 41.75547, lon: -86.26585 },
     address: '50651 Laurel Road South Bend, IN 46637',
     city: 'South Bend',
     state: 'IN',
@@ -276,7 +278,7 @@ export const activities: Activity[] = [
   }
 ];
 
-type CalendarEvent = {
+export type CalendarEvent = {
   id: number;
   start: string;
   end: string;

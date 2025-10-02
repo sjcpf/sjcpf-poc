@@ -18,6 +18,11 @@ const router = createRouter({
           component: ViewHome,
         },
         {
+          path: '/donate',
+          name: RouteNameEnum.DONATE,
+          component: () => import('@/views/ViewDonate.vue'),
+        },
+        {
           path: '/events',
           name: RouteNameEnum.EVENTS,
           component: () => import('@/views/ViewEvents.vue'),
@@ -28,14 +33,19 @@ const router = createRouter({
           component: () => import('@/views/ViewCalendar.vue'),
         },
         {
+          path: '/nearbyParks',
+          name: RouteNameEnum.NEARBY,
+          component: () => import('@/views/ViewNearby.vue')
+        },
+        {
           path: '/parks',
           name: RouteNameEnum.PARKS,
           component: () => import('@/views/ViewParks.vue'),
         },
         {
-          path: '/parks/:park/information',
+          path: '/parks/:park',
           name: RouteNameEnum.PARK_INFORMATION,
-          component: () => import('@/views/ViewParkInformation.vue'),
+          component: () => import('@/views/ViewPark.vue'),
         },
         {
           path: '/parks/:park/amenities',
