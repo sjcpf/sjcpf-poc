@@ -1,5 +1,4 @@
-
-<script lang='ts' setup>
+<script lang="ts" setup>
 import { backIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 import { RouteNameEnum } from '@/shared/enums';
@@ -8,28 +7,23 @@ import { ref } from 'vue';
 import { useGeolocation } from '@/utils/useGeolocation';
 import { headingDistanceTo } from 'geolocation-utils';
 import { useMeta } from 'quasar';
+import ParksMap from '@/components/ParksMap.vue'; // ✅ new import
 
 useMeta({ title: `${appName} - Nearby Parks` })
 const { location } = useGeolocation();
 
-const sheetY = ref(0) // drag offset
+const sheetY = ref(0)
 const expanded = ref(false)
 
-function toggleSheet() {
-  expanded.value = !expanded.value
-}
-
+function toggleSheet() { expanded.value = !expanded.value }
 function onDragStart(e: TouchEvent | MouseEvent) {
   const startY = 'touches' in e ? e.touches[0].clientY : e.clientY
   const initial = sheetY.value
-
   function move(ev: TouchEvent | MouseEvent) {
     const currentY = 'touches' in ev ? ev.touches[0].clientY : ev.clientY
     sheetY.value = Math.max(0, initial + (currentY - startY))
   }
-
   function end() {
-    // snap to expanded or collapsed
     expanded.value = sheetY.value < 80
     sheetY.value = 0
     window.removeEventListener('mousemove', move)
@@ -37,7 +31,6 @@ function onDragStart(e: TouchEvent | MouseEvent) {
     window.removeEventListener('touchmove', move)
     window.removeEventListener('touchend', end)
   }
-
   window.addEventListener('mousemove', move)
   window.addEventListener('mouseup', end)
   window.addEventListener('touchmove', move)
@@ -53,41 +46,35 @@ function onDragStart(e: TouchEvent | MouseEvent) {
         <q-btn flat round :icon="backIcon" @click="$router.back()" />
         <h4 class="text-h6 hero-top-bar page-name">Nearby Parks</h4>
       </div>
-      <!-- Placeholder map image -->
-      <q-img
-        src="/images/nearbyParks.webp"
-        class="hero-img"
-        fit="cover"
-        position="center center"
-      />
+
+      <!-- Live Amazon Location Map -->
+      <ParksMap class="hero-img" />
     </div>
 
-    <!-- Parks List Card -->
+    <!-- Parks List Card (unchanged) -->
     <div
       class="list-card"
       :class="{ expanded }"
       :style="{ transform: expanded ? 'translateY(0)' : 'translateY(calc(100% - 100px))' }"
     >
-      <!-- Handle -->
       <div
         class="handle"
         @mousedown="onDragStart"
         @touchstart="onDragStart"
         @click="toggleSheet"
       ></div>
-      <!-- Park List -->
-       <div class="park-list">
-        <div v-for="(park, key) in parks" :key="key"
+
+      <div class="park-list">
+        <div
+          v-for="(park, key) in parks"
+          :key="key"
           class="park-item"
           @click="$router.push({ name: RouteNameEnum.PARK_INFORMATION, params: { park: key } })"
         >
-          <!-- Left Column: Title + Subtitle -->
           <div class="park-left">
             <div class="park-title">{{ park.name }}</div>
             <div class="park-subtitle">{{ park.city ?? 'South Bend, IN' }}</div>
           </div>
-
-          <!-- Right Column: Distance -->
           <div class="park-right">
             <div class="park-distance">
               <div class="distance-value">

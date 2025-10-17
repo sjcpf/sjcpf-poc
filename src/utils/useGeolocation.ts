@@ -60,7 +60,7 @@ export function useGeolocation() {
       : { lat: 41.6764, lon: -86.2520}
   );
 
-  console.log("User's current location:", location);
+  console.log("User's current location:", location.value);
 
   return { location, isLoading, error };
 }
