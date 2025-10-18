@@ -82,7 +82,7 @@ async function addParksLayer() {
   }
 
   const parkFeatures = {
-    type: 'FeatureCollection',
+    type: '"FeatureCollection"',
     features: parks.map(p => {
       const loc = toLatLon(p.location)
       return {
