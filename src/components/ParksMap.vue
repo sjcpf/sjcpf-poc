@@ -1,6 +1,18 @@
 <template>
   <q-card flat bordered class="full-height">
-    <div ref="mapContainer" class="map"/>
+    <div class="map-container">
+      <div class="map-controls">
+        <label>
+          <input type="checkbox" v-model="terrainEnabled" @change="updateMap" />
+          Terrain
+        </label>
+        <label>
+          <input type="checkbox" v-model="contourEnabled" @change="updateMap" />
+          Contours
+        </label>
+      </div>
+      <div ref="mapContainer" class="map"/>
+    </div>
   </q-card>
 </template>
 
@@ -10,152 +22,151 @@ import { toLatLon } from 'geolocation-utils'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import maplibregl from 'maplibre-gl'
 import { withAPIKey } from '@aws/amazon-location-utilities-auth-helper'
-import { useGeolocation } from '@/utils/useGeolocation';
+import { useGeolocation } from '@/utils/useGeolocation'
 
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-const region = 'us-east-2'
-const mapApiKey = 'v1.public.eyJqdGkiOiI2NmIyMjAzMy02ZGIzLTQ5OTUtYmYwOC03NzEyM2NhODZmNDMifSJ_-DZCmlnk4VJdZX3EB-z_D8BLnHLuJjMI69wj6I_-FoL-mBZnyHapc8S63fnvkk4HYd2mSvU4YRfY3iWaOlyzeA_4_DwTg8-tkdK5GHyoypWrrHXJ2UXjgIffRs-EP2EP7hDm42F0ljhpWDSXDO68ZM7qMM2RwbAbYa-rVkO3ZKmIskgqVbzSL3-Gs_mVGo4nFqvO34fN0gYWSxc5X9yVPGogqN0tc9qFDvmxwPoViNArdYI0hKFoiDBRcKkm53vb4UXh49PcE5SpM56TTtVzAXzuMSc-h6_lkuJbGHr3iKHzREORFm5FYVE1qRJO5_KI8RfNcSaR2A1reR6FCw0.NjAyMWJkZWUtMGMyOS00NmRkLThjZTMtODEyOTkzZTUyMTBi'
+const { location } = useGeolocation()
+const awsRegion = 'us-east-2'
+const mapApiKey =
+  'v1.public.eyJqdGkiOiI2NmIyMjAzMy02ZGIzLTQ5OTUtYmYwOC03NzEyM2NhODZmNDMifSJ_-DZCmlnk4VJdZX3EB-z_D8BLnHLuJjMI69wj6I_-FoL-mBZnyHapc8S63fnvkk4HYd2mSvU4YRfY3iWaOlyzeA_4_DwTg8-tkdK5GHyoypWrrHXJ2UXjgIffRs-EP2EP7hDm42F0ljhpWDSXDO68ZM7qMM2RwbAbYa-rVkO3ZKmIskgqVbzSL3-Gs_mVGo4nFqvO34fN0gYWSxc5X9yVPGogqN0tc9qFDvmxwPoViNArdYI0hKFoiDBRcKkm53vb4UXh49PcE5SpM56TTtVzAXzuMSc-h6_lkuJbGHr3iKHzREORFm5FYVE1qRJO5_KI8RfNcSaR2A1reR6FCw0.NjAyMWJkZWUtMGMyOS00NmRkLThjZTMtODEyOTkzZTUyMTBi'
 
-const { location } = useGeolocation();
 const mapContainer = ref<HTMLDivElement | null>(null)
 let map: maplibregl.Map | null = null
 
-onMounted(async () => {
-  await withAPIKey(mapApiKey) // still needed for tile access
+// Make these reactive so v-model works
+const terrainEnabled = ref(false)
+const contourEnabled = ref(false)
 
-  const awsMapUrl = `https://maps.geo.${region}.amazonaws.com/v2/styles/Standard/descriptor?key=${mapApiKey}`
-  const satMapUrl = 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+// Choose map style name based on toggles (per your AWS docs usage)
+function getStyleName() {
+  return terrainEnabled.value || contourEnabled.value ? 'Standard' : 'Hybrid'
+}
+
+function getStyleUrl() {
+  const mapStyle = getStyleName()
+  const params = new URLSearchParams({ key: mapApiKey })
+
+  // add AWS params exactly like docs
+  if (terrainEnabled.value) params.append('terrain', 'Hillshade')
+  if (contourEnabled.value) params.append('contour-density', 'Medium')
+
+  return `https://maps.geo.${awsRegion}.amazonaws.com/v2/styles/${mapStyle}/descriptor?${params}`
+}
+
+async function removeIfExists(id: string, type: 'layer' | 'source') {
+  if (!map) return
+  try {
+    if (type === 'layer' && map.getLayer(id)) map.removeLayer(id)
+    if (type === 'source' && map.getSource(id)) map.removeSource(id)
+  } catch (e) {
+    // ignore errors from removal races
+    console.warn(`removeIfExists(${id}, ${type}) failed:`, e)
+  }
+}
+
+async function addParksLayer() {
+  if (!map) return
+  // remove existing to avoid duplicate-id errors
+  await removeIfExists('parks-layer', 'layer')
+  await removeIfExists('parks', 'source')
+
+  // ensure icon exists
+  try {
+    if (!map.hasImage('park-icon')) {
+      const icon = await map.loadImage('https://cdn-icons-png.flaticon.com/512/5203/5203052.png')
+      if (icon) map.addImage('park-icon', icon.data)
+    }
+  } catch (err) {
+    console.warn('Failed to load park icon:', err)
+  }
+
+  const parkFeatures = {
+    type: 'FeatureCollection',
+    features: parks.map(p => {
+      const loc = toLatLon(p.location)
+      return {
+        type: 'Feature',
+        geometry: { type: 'Point', coordinates: [loc.lon, loc.lat] },
+        properties: { id: p.id, name: p.name }
+      }
+    })
+  }
+
+  if (!map.getSource('parks')) {
+    map.addSource('parks', {
+      type: 'geojson',
+      data: parkFeatures
+    });
+  }
+
+  if (!map.getLayer('parks-layer')) {
+    map.addLayer({
+      id: 'parks-layer',
+      type: 'symbol',
+      source: 'parks',
+      layout: {
+        'icon-image': 'park-icon',
+        'icon-size': 0.1,
+        'icon-allow-overlap': true,
+        'text-field': ['get', 'name'],
+        'text-font': ['Open Sans Regular'],
+        'text-size': 11,
+        'text-offset': [0, 1.2],
+        'text-anchor': 'top'
+      },
+      paint: {
+        'text-halo-color': '#000',
+        'text-halo-width': 1,
+        'text-color': '#fff'
+      }
+    });
+  }
+}
+
+// Called when user toggles checkboxes
+function updateMap() {
+  if (!map) return console.error('NO MAP YET!')
+  const styleUrl = getStyleUrl()
+  map.setStyle(styleUrl)
+
+  // After the style loads, re-add custom sources/layers (parks) so they persist
+  map.once('styledata', async () => {
+    // Re-add parks (and any other custom overlays you need)
+    await addParksLayer()
+  })
+}
+
+onMounted(async () => {
+  await withAPIKey(mapApiKey)
 
   map = new maplibregl.Map({
     container: mapContainer.value!,
     center: toLatLon(location.value),
+    style: getStyleUrl(), // use the dynamic URL generator
     zoom: 11,
     pitch: 0,
     bearing: 0,
-    validateStyle: false
-  })
-
-  map.setStyle(awsMapUrl, {
-    transformStyle: (previousStyle, nextStyle) => {
-      nextStyle.projection = {type: 'globe'};
-      nextStyle.sources = {
-        ...nextStyle.sources,
-        satelliteSource: {
-          type: 'raster',
-          tiles: [
-            satMapUrl
-          ],
-          tileSize: 256
-        },
-        /*terrainSource: {
-          type: 'raster-dem',
-          url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
-          tileSize: 256
-        },
-        hillshadeSource: {
-          type: 'raster-dem',
-          url: 'https://demotiles.maplibre.org/terrain-tiles/tiles.json',
-          tileSize: 256
-        }*/
-      }
-      /*nextStyle.terrain = {
-        source: 'terrainSource',
-        exaggeration: 1
-      }*/
-
-      /*nextStyle.sky = {
-        'atmosphere-blend': [
-          'interpolate',
-          ['linear'],
-          ['zoom'],
-          0, 1,
-          2, 0
-        ],
-      }*/
-
-      /*nextStyle.layers.push({
-        id: 'hills',
-        type: 'hillshade',
-        source: 'hillshadeSource',
-        layout: { visibility: 'visible' },
-        paint: { 'hillshade-shadow-color': '#473B24' }
-      })*/
-
-      const firstNonFillLayer = nextStyle.layers.find(layer => layer.type !== 'fill' && layer.type !== 'background');
-      if (firstNonFillLayer) {
-        nextStyle.layers.splice(nextStyle.layers.indexOf(firstNonFillLayer), 0, {
-          id: 'satellite',
-          type: 'raster',
-          source: 'satelliteSource',
-          layout: { visibility: 'visible' },
-          paint: { 'raster-opacity': 1 }
-        });
-      }
-
-      return nextStyle;
-    }
+    validateStyle: false,
+    attributionControl: false
   })
 
   // Disable rotation/tilt for all control types
-  map.dragRotate.disable();
-  map.keyboard.disable();
-  map.touchZoomRotate.disableRotation();
+  map.dragRotate.disable()
+  map.keyboard.disable()
+  map.touchZoomRotate.disableRotation()
 
   map.addControl(new maplibregl.NavigationControl())
+  map.addControl(
+    new maplibregl.GeolocateControl({
+      positionOptions: { enableHighAccuracy: true },
+      trackUserLocation: true
+    })
+  )
 
   map.on('load', async () => {
-    // Load your marker icon (change URL or use a local asset)
-    if (map) {
-      const icon = await map.loadImage('https://cdn-icons-png.flaticon.com/512/5203/5203052.png')
-      map.addImage('park-icon', icon.data)
-
-      // Convert parks array → GeoJSON FeatureCollection
-      const parkFeatures = {
-        type: 'FeatureCollection',
-        features: parks.map(p => {
-          const loc = toLatLon(p.location)
-          console.log('Park location:', p.name, loc)
-          return {
-            type: 'Feature',
-            geometry: {
-              type: 'Point',
-              coordinates: [loc.lon, loc.lat]
-            },
-            properties: {
-              id: p.id,
-              name: p.name
-            }
-          }
-        })
-      }
-
-      map.addSource('parks', {
-        type: 'geojson',
-        data: parkFeatures
-      })
-
-      map.addLayer({
-        id: 'parks-layer',
-        type: 'symbol',
-        source: 'parks',
-        layout: {
-          'icon-image': 'park-icon',
-          'icon-size': 0.1,
-          'icon-allow-overlap': true,
-          'text-field': ['get', 'name'],
-          'text-font': ['Open Sans Regular'],
-          'text-size': 11,
-          'text-offset': [0, 1.2],
-          'text-anchor': 'top'
-        },
-        paint: {
-          'text-halo-color': '#000',
-          'text-halo-width': 1,
-          'text-color': '#fff'
-        }
-      })
-    }
+    // initial add of parks
+    await addParksLayer()
   })
 })
 
@@ -174,5 +185,25 @@ onBeforeUnmount(() => {
   border-top-left-radius: 45px;
   border-top-right-radius: 45px;
   overflow: hidden;
+}
+.map-controls {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(30, 30, 30, 0.7);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  z-index: 2;
+}
+.map-controls label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
 }
 </style>
