@@ -81,8 +81,8 @@ async function addParksLayer() {
     console.warn('Failed to load park icon:', err)
   }
 
-  const parkFeatures = {
-    type: '"FeatureCollection"',
+  const parkFeatures: GeoJSON.FeatureCollection<GeoJSON.Point> = {
+    type: 'FeatureCollection',
     features: parks.map(p => {
       const loc = toLatLon(p.location)
       return {
