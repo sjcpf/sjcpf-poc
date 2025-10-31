@@ -3,8 +3,9 @@ import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { activities, activityTypes, parks } from '@/shared/constants'
 import type { Activity, ActivityType, Park } from '@/shared/constants';
-import { backIcon, shareIcon } from '@/shared/icons';
+import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
+import { evaPhoneCallOutline } from '@quasar/extras/eva-icons';
 
 const route = useRoute();
 
@@ -48,16 +49,22 @@ console.log("ActivityType:", activityType?.value);
     <div class="info-card q-pa-lg">
       <h3 class="text-h5 q-mb-sm info-card-header">{{ activityType?.label }} at</h3>
       <h4 class="text-h5 q-mb-sm info-card-subheader">{{ park?.name }}</h4>
-      <!--<div v-if="activity?.phone || activity?.location" class="contact q-mb-md">
-        <div v-if="activity.phone" class="row items-center q-mb-xs">
-          <q-icon :name="callIcon" size="20px" class="q-mr-sm"/>
-          <span>{{ activity.phone }}</span>
+      <div v-if="activity?.phone || park?.address" class="contact q-mb-md">
+        <div v-if="park?.phone" class="row items-center q-mb-xs">
+          <q-icon :name="evaPhoneCallOutline" size="20px" class="q-mr-sm" />
+          <span><a :href="'tel:' + park?.phone" target="_blank">{{park?.phone}}</a></span>
         </div>
-        <div v-if="activity.location" class="row items-center">
+        <div v-if="park?.address" class="row items-center">
           <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
-          <span>{{ activity.location }}</span>
+          <span><a
+              :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(park?.address || '')"
+              target="_blank"
+            >
+              {{ park?.address }}
+            </a>
+          </span>
         </div>
-      </div>-->
+      </div>
 
       <!-- Activity Details -->
       <div v-if="activity?.details" class="program-details q-mb-md">

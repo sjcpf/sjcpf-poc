@@ -1,7 +1,7 @@
 <script lang='ts' setup>
 import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
-import { activityTypes, activities, parks, trails, type ParkTrail } from '@/shared/constants'
+import { activityTypes, activities, parks, trails } from '@/shared/constants'
 import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 
@@ -10,15 +10,38 @@ const route = useRoute()
 const activityTypeKey = route.params.activity as string;
 const activityType = ref(activityTypes[activityTypeKey]);
 
+type TrailData = { id: number, park: number; count: number; totalLength: number, activityType: string };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isTrailData(obj: any): obj is TrailData {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    typeof obj.park === 'number' &&
+    typeof obj.count === 'number' &&
+    typeof obj.totalLength === 'number' &&
+    obj.activityType === 'hiking'
+  )
+}
+
 const filteredActivities = computed(() => {
   if (!activityType.value) return [];
   if (activityTypeKey !== 'hiking') {
     return activities.filter(a => a.activityType === activityTypeKey);
   } else {
-    return trails.filter(t => t.activityType === activityTypeKey).reduce((acc: Record<number, ParkTrail>, trail) => {
-    if (!acc[trail.park]) acc[trail.park] = trail;
-    return acc;
-  }, {})
+    const parkMap = trails
+      .filter(t => t.activityType === activityTypeKey)
+      .reduce((acc: Record<number, TrailData>, trail) => {
+        const parkId = trail.park;
+        if (!acc[parkId]) {
+          acc[parkId] = { id: trail.id, park: parkId, count: 1, totalLength: trail.length || 0, activityType: 'hiking' };
+        } else {
+          acc[parkId].count++;
+          acc[parkId].totalLength += trail.length || 0;
+        }
+        return acc;
+      }, {});
+    return Object.values(parkMap);
   }
 });
 
@@ -48,19 +71,20 @@ const getPark = (parkId: number) => parks.find(p => p.id === parkId);
       <!-- List of Parks -->
       <div class="q-pa-lg">
         <h5 class="text-subtitle1 q-mb-sm">Found at:</h5>
-        <ul>
-          <li v-for="act in filteredActivities" :key="act.id" class="q-mb-sm">
-            <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
-            <RouterLink
-              :to="act.activityType === 'hiking'
-                    ? `/parks/${act.park}`
-                    : `/parks/${act.park}/activities/${act.id}`"
-              class="text-primary"
-            >
-              {{ getPark(act.park)?.name }}
-            </RouterLink>
-          </li>
-        </ul>
+        <div v-for="act in filteredActivities" :key="act.id" class="q-mb-sm">
+          <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
+          <RouterLink
+            :to="act.activityType === 'hiking'
+                  ? `/parks/${act.park}`
+                  : `/parks/${act.park}/activities/${act.id}`"
+            class="text-primary"
+          >
+            {{ getPark(act.park)?.name }}
+            <span v-if="isTrailData(act)">
+              <span> ({{ act.count }}) ({{ act.totalLength.toFixed(2) }}mi)</span>
+            </span>
+          </RouterLink>
+        </div>
       </div>
 
       <!-- Social Share -->
