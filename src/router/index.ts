@@ -53,7 +53,7 @@ const router = createRouter({
           component: () => import('@/views/ViewParkAmenities.vue'),
         },
         {
-          path: '/parks/:park/trails',
+          path: '/parks/:park/trails/:trail',
           name: RouteNameEnum.PARK_TRAILS,
           component: () => import('@/views/ViewParkTrails.vue'),
         },

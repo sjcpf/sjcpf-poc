@@ -2,7 +2,6 @@
 import PageResponsive from '@/components/page/PageResponsive.vue'
 import { activityTypes, appName } from '@/shared/constants'
 import { RouteNameEnum } from '@/shared/enums'
-// import { RouteNameEnum } from '@/shared/enums'
 import { searchIcon } from '@/shared/icons'
 import { useMeta } from 'quasar'
 import { ref } from 'vue'
@@ -10,6 +9,18 @@ import { ref } from 'vue'
 useMeta({ title: `${appName} - Home` })
 
 const search = ref('')
+
+const homeActivityKeys: (keyof typeof activityTypes)[] = [
+  'biking',
+  'canoeing',
+  'discGolf',
+  'geocaching',
+  'hiking',
+  'orienteering',
+  'playground',
+  'running'
+];
+
 </script>
 
 <template>
@@ -43,7 +54,7 @@ const search = ref('')
         <q-item-label class="text-h6 q-mb-lg">Activities</q-item-label>
         <div class="row q-gutter-y-sm q-col-gutter-md">
           <div
-            v-for="(activity, key) in activityTypes"
+            v-for="key in homeActivityKeys"
             :key="key"
             flat
             class="flex flex-center column col-3"
@@ -52,8 +63,8 @@ const search = ref('')
               params: { activity: key }
             })"
           >
-            <q-img :src="activity.img" class="activity-img rounded-borders" />
-            <div class="activity-label q-mt-sm">{{ activity.label }}</div>
+            <q-img :src="activityTypes[key].img" class="activity-img rounded-borders" />
+            <div class="activity-label q-mt-sm">{{ activityTypes[key].label }}</div>
           </div>
         </div>
       </div>

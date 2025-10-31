@@ -1,7 +1,7 @@
 <script lang='ts' setup>
 import { useRoute } from 'vue-router'
 import { computed, ref } from 'vue'
-import { activityTypes, activities, parks } from '@/shared/constants'
+import { activityTypes, activities, parks, trails, type ParkTrail } from '@/shared/constants'
 import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 
@@ -12,7 +12,14 @@ const activityType = ref(activityTypes[activityTypeKey]);
 
 const filteredActivities = computed(() => {
   if (!activityType.value) return [];
-  return activities.filter(a => a.activityType === activityTypeKey);
+  if (activityTypeKey !== 'hiking') {
+    return activities.filter(a => a.activityType === activityTypeKey);
+  } else {
+    return trails.filter(t => t.activityType === activityTypeKey).reduce((acc: Record<number, ParkTrail>, trail) => {
+    if (!acc[trail.park]) acc[trail.park] = trail;
+    return acc;
+  }, {})
+  }
 });
 
 const getPark = (parkId: number) => parks.find(p => p.id === parkId);
@@ -45,7 +52,9 @@ const getPark = (parkId: number) => parks.find(p => p.id === parkId);
           <li v-for="act in filteredActivities" :key="act.id" class="q-mb-sm">
             <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
             <RouterLink
-              :to="`/parks/${act.park}/activities/${act.id}`"
+              :to="act.activityType === 'hiking'
+                    ? `/parks/${act.park}`
+                    : `/parks/${act.park}/activities/${act.id}`"
               class="text-primary"
             >
               {{ getPark(act.park)?.name }}

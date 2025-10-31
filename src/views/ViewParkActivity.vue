@@ -3,7 +3,7 @@ import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { activities, activityTypes, parks } from '@/shared/constants'
 import type { Activity, ActivityType, Park } from '@/shared/constants';
-import { backIcon, callIcon, mapPinIcon, shareIcon } from '@/shared/icons';
+import { backIcon, shareIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 
 const route = useRoute();
@@ -48,7 +48,7 @@ console.log("ActivityType:", activityType?.value);
     <div class="info-card q-pa-lg">
       <h3 class="text-h5 q-mb-sm info-card-header">{{ activityType?.label }} at</h3>
       <h4 class="text-h5 q-mb-sm info-card-subheader">{{ park?.name }}</h4>
-      <div v-if="activity?.phone || activity?.location" class="contact q-mb-md">
+      <!--<div v-if="activity?.phone || activity?.location" class="contact q-mb-md">
         <div v-if="activity.phone" class="row items-center q-mb-xs">
           <q-icon :name="callIcon" size="20px" class="q-mr-sm"/>
           <span>{{ activity.phone }}</span>
@@ -57,7 +57,7 @@ console.log("ActivityType:", activityType?.value);
           <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
           <span>{{ activity.location }}</span>
         </div>
-      </div>
+      </div>-->
 
       <!-- Activity Details -->
       <div v-if="activity?.details" class="program-details q-mb-md">
