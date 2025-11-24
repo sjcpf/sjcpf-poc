@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { parks } from '@/shared/constants'
+import { parks, trailData, bikeTrailData } from '@/shared/constants'
 import { toLatLon } from 'geolocation-utils'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import maplibregl from 'maplibre-gl'
@@ -65,6 +65,21 @@ async function removeIfExists(id: string, type: 'layer' | 'source') {
   }
 }
 
+// WIP Trails Layer
+/*async function addTrailsLayer() {
+  if (!map) return
+
+  await removeIfExists('trails-layer', 'layer')
+  await removeIfExists('parks', 'source')
+
+  const trailLines: GeoJSON.FeatureCollection<GeoJSON.Geometry> = {
+    type: 'FeatureCollection',
+    features: trailData.map(p => {
+      const featureCoords = p.geoJSON.
+    })
+  }
+}*/
+
 async function addParksLayer() {
   if (!map) return
   // remove existing to avoid duplicate-id errors
@@ -81,7 +96,7 @@ async function addParksLayer() {
     console.warn('Failed to load park icon:', err)
   }
 
-  const parkFeatures: GeoJSON.FeatureCollection<GeoJSON.Point> = {
+  const parkLocations: GeoJSON.FeatureCollection<GeoJSON.Point> = {
     type: 'FeatureCollection',
     features: parks.map(p => {
       const loc = toLatLon(p.location)
@@ -96,7 +111,7 @@ async function addParksLayer() {
   if (!map.getSource('parks')) {
     map.addSource('parks', {
       type: 'geojson',
-      data: parkFeatures
+      data: parkLocations
     });
   }
 
