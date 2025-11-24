@@ -67,7 +67,7 @@ const trail = ref<ParkTrail | undefined>(
         </div>
         <h5 class="text-subtitle1 q-mb-sm">Trail Information:</h5>
           <div>Description: {{ trail?.description }}</div>
-          <div v-if="trail?.amentinies">Amenities: {{ trail?.amentinies }}</div>
+          <div v-if="trail?.amenities">Amenities: {{ trail?.amenities }}</div>
           <div>Length: {{ trail?.length }}</div>
           <div>Difficulty: {{ trail?.difficulty ?? 'Easy'}}</div>
           <div>Surface: {{ trail?.surface ?? 'Natural' }}</div>
