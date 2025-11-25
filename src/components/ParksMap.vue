@@ -202,8 +202,6 @@ function setupCompass() {
   }
 }
 
-setupCompass()
-
 function createHeadingMarker() {
   if (!map) return
 
@@ -221,8 +219,6 @@ function createHeadingMarker() {
     rotationAlignment: 'map'
   }).setLngLat([0, 0]).addTo(map)
 }
-
-createHeadingMarker()
 
 // Called when user toggles checkboxes
 function updateMap() {
@@ -280,7 +276,10 @@ onMounted(async () => {
   map.on('load', async () => {
     // initial add of parks
     await addParksLayer()
+    createHeadingMarker()
   })
+
+  setupCompass()
 })
 
 onBeforeUnmount(() => {
