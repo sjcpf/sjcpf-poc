@@ -17,9 +17,9 @@
 </template>
 
 <script setup lang="ts">
-import { parks, trailData, bikeTrailData } from '@/shared/constants'
+import { parks, /*trailData, bikeTrailData*/ } from '@/shared/constants'
 import { toLatLon } from 'geolocation-utils'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import maplibregl from 'maplibre-gl'
 import { withAPIKey } from '@aws/amazon-location-utilities-auth-helper'
 import { useGeolocation } from '@/utils/useGeolocation'
@@ -27,6 +27,9 @@ import { useGeolocation } from '@/utils/useGeolocation'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 const { location } = useGeolocation()
+const heading = ref<number | null>(null)
+let headingMarker: maplibregl.Marker | null = null
+
 const awsRegion = 'us-east-2'
 const mapApiKey =
   'v1.public.eyJqdGkiOiI2NmIyMjAzMy02ZGIzLTQ5OTUtYmYwOC03NzEyM2NhODZmNDMifSJ_-DZCmlnk4VJdZX3EB-z_D8BLnHLuJjMI69wj6I_-FoL-mBZnyHapc8S63fnvkk4HYd2mSvU4YRfY3iWaOlyzeA_4_DwTg8-tkdK5GHyoypWrrHXJ2UXjgIffRs-EP2EP7hDm42F0ljhpWDSXDO68ZM7qMM2RwbAbYa-rVkO3ZKmIskgqVbzSL3-Gs_mVGo4nFqvO34fN0gYWSxc5X9yVPGogqN0tc9qFDvmxwPoViNArdYI0hKFoiDBRcKkm53vb4UXh49PcE5SpM56TTtVzAXzuMSc-h6_lkuJbGHr3iKHzREORFm5FYVE1qRJO5_KI8RfNcSaR2A1reR6FCw0.NjAyMWJkZWUtMGMyOS00NmRkLThjZTMtODEyOTkzZTUyMTBi'
@@ -139,6 +142,88 @@ async function addParksLayer() {
   }
 }
 
+/** Some iOS Safari builds expose this permission request function. */
+interface DeviceOrientationPermission {
+  requestPermission?: () => Promise<"granted" | "denied">;
+}
+
+/** iOS Safari provides a non-standard compass heading field. */
+interface IOSDeviceOrientationEvent extends DeviceOrientationEvent {
+  webkitCompassHeading: number;
+}
+
+/** Type guard for iOS Safari heading support */
+function isIOSDeviceOrientationEvent(
+  e: DeviceOrientationEvent
+): e is IOSDeviceOrientationEvent {
+  return "webkitCompassHeading" in e;
+}
+
+/** Type guard for iOS Safari permission API */
+function hasDeviceOrientationPermission(
+  obj: typeof DeviceOrientationEvent
+): obj is typeof DeviceOrientationEvent & DeviceOrientationPermission {
+  return typeof (obj as Partial<DeviceOrientationPermission>).requestPermission === "function";
+}
+
+// --- Compass setup ------------------------------------------------
+
+function setupCompass() {
+  const handler = (e: DeviceOrientationEvent) => {
+    let h: number | null = null;
+
+    // Case 1: iOS Safari with webkitCompassHeading
+    if (isIOSDeviceOrientationEvent(e)) {
+      h = e.webkitCompassHeading;
+    }
+
+    // Case 2: Standard browser alpha heading
+    else if (typeof e.alpha === "number") {
+      h = e.alpha;
+    }
+
+    if (h !== null && !Number.isNaN(h)) {
+      heading.value = h;
+    }
+  };
+
+  // iOS requires explicit permission (if supported)
+  if (hasDeviceOrientationPermission(DeviceOrientationEvent)) {
+    DeviceOrientationEvent.requestPermission?.()
+      .then((state) => {
+        if (state === "granted") {
+          window.addEventListener("deviceorientation", handler, true);
+        }
+      })
+      .catch(console.warn);
+  } else {
+    // Normal browsers
+    window.addEventListener("deviceorientation", handler, true);
+  }
+}
+
+setupCompass()
+
+function createHeadingMarker() {
+  if (!map) return
+
+  const el = document.createElement("div")
+  el.style.width = "24px"
+  el.style.height = "24px"
+  el.style.border = "8px solid transparent"
+  el.style.borderBottom = "14px solid #4287f5" // arrow color
+  el.style.borderRadius = "2px"
+  el.style.transformOrigin = "50% 70%"
+
+  headingMarker = new maplibregl.Marker({
+    element: el,
+    anchor: 'center',
+    rotationAlignment: 'map'
+  }).setLngLat([0, 0]).addTo(map)
+}
+
+createHeadingMarker()
+
 // Called when user toggles checkboxes
 function updateMap() {
   if (!map) return console.error('NO MAP YET!')
@@ -151,6 +236,12 @@ function updateMap() {
     await addParksLayer()
   })
 }
+
+watch(heading, (h) => {
+  if (!headingMarker || h == null) return
+  const el = headingMarker.getElement()
+  el.style.transform = `rotate(${h}deg)`
+})
 
 onMounted(async () => {
   await withAPIKey(mapApiKey)
@@ -172,12 +263,19 @@ onMounted(async () => {
   map.touchZoomRotate.disableRotation()
 
   map.addControl(new maplibregl.NavigationControl())
-  map.addControl(
-    new maplibregl.GeolocateControl({
-      positionOptions: { enableHighAccuracy: true },
-      trackUserLocation: true
-    })
-  )
+
+  const geo = new maplibregl.GeolocateControl({
+    positionOptions: { enableHighAccuracy: true },
+    trackUserLocation: true
+  })
+
+  map.addControl(geo);
+
+  geo.on('geolocate', (pos) => {
+    if (!headingMarker) return
+    const { latitude, longitude } = pos.coords
+    headingMarker.setLngLat([longitude, latitude])
+  })
 
   map.on('load', async () => {
     // initial add of parks
