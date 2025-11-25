@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { parks, /*trailData, bikeTrailData*/ } from '@/shared/constants'
 import { toLatLon } from 'geolocation-utils'
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import maplibregl from 'maplibre-gl'
 import { withAPIKey } from '@aws/amazon-location-utilities-auth-helper'
 import { useGeolocation } from '@/utils/useGeolocation'
@@ -27,7 +27,7 @@ import { useGeolocation } from '@/utils/useGeolocation'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 const { location } = useGeolocation()
-const heading = ref<number | null>(null)
+// const heading = ref<number | null>(null)
 let headingMarker: maplibregl.Marker | null = null
 
 const awsRegion = 'us-east-2'
@@ -144,7 +144,7 @@ async function addParksLayer() {
 
 /** Some iOS Safari builds expose this permission request function. */
 interface DeviceOrientationPermission {
-  requestPermission?: () => Promise<"granted" | "denied">;
+  requestPermission?: () => Promise<"granted" | "denied" | "prompt">;
 }
 
 /** iOS Safari provides a non-standard compass heading field. */
@@ -169,23 +169,24 @@ function hasDeviceOrientationPermission(
 // --- Compass setup ------------------------------------------------
 
 function setupCompass() {
-  const handler = (e: DeviceOrientationEvent) => {
+   const handler = (e: DeviceOrientationEvent) => {
     let h: number | null = null;
 
-    // Case 1: iOS Safari with webkitCompassHeading
+    // iOS Safari heading
     if (isIOSDeviceOrientationEvent(e)) {
       h = e.webkitCompassHeading;
     }
 
-    // Case 2: Standard browser alpha heading
+    // Standard deviceorientation alpha
     else if (typeof e.alpha === "number") {
       h = e.alpha;
     }
 
-    if (h !== null && !Number.isNaN(h)) {
-      heading.value = h;
+    if (h !== null && headingMarker) {
+      headingMarker.setRotation(h);
     }
   };
+
 
   // iOS requires explicit permission (if supported)
   if (hasDeviceOrientationPermission(DeviceOrientationEvent)) {
@@ -211,13 +212,19 @@ function createHeadingMarker() {
   el.style.border = "8px solid transparent"
   el.style.borderBottom = "14px solid #4287f5" // arrow color
   el.style.borderRadius = "2px"
-  el.style.transformOrigin = "50% 70%"
+  el.style.transform = ""
+  el.style.transformOrigin = "center"
+  el.style.position = "relative"
+  el.style.left = "50%"
+  el.style.top = "50%"
 
   headingMarker = new maplibregl.Marker({
     element: el,
-    anchor: 'center',
-    rotationAlignment: 'map'
-  }).setLngLat([0, 0]).addTo(map)
+    anchor: 'bottom',
+    pitchAlignment: "map"
+  });
+  headingMarker.addTo(map)
+  headingMarker.setOffset([0, -25])
 }
 
 // Called when user toggles checkboxes
@@ -232,12 +239,6 @@ function updateMap() {
     await addParksLayer()
   })
 }
-
-watch(heading, (h) => {
-  if (!headingMarker || h == null) return
-  const el = headingMarker.getElement()
-  el.style.transform = `rotate(${h}deg)`
-})
 
 onMounted(async () => {
   await withAPIKey(mapApiKey)
@@ -267,11 +268,24 @@ onMounted(async () => {
 
   map.addControl(geo);
 
-  geo.on('geolocate', (pos) => {
-    if (!headingMarker) return
-    const { latitude, longitude } = pos.coords
-    headingMarker.setLngLat([longitude, latitude])
-  })
+  geo.on("geolocate", (pos) => {
+    if (!headingMarker) return;
+    headingMarker.setLngLat([pos.longitude, pos.latitude]);
+  });
+
+  geo.on("trackuserlocationstart", () => {
+    map?.on("render", updateMarkerPosition);
+  });
+
+  geo.on("trackuserlocationend", () => {
+    map?.off("render", updateMarkerPosition);
+  });
+
+  function updateMarkerPosition() {
+    const pos = geo._lastKnownPosition;
+    if (!pos || !headingMarker) return;
+    headingMarker.setLngLat([pos.coords.longitude, pos.coords.latitude]);
+  }
 
   map.on('load', async () => {
     // initial add of parks
@@ -283,8 +297,10 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
-  if (map) map.remove()
-})
+  headingMarker?.remove();
+  headingMarker = null;
+  map?.remove();
+});
 </script>
 
 <style scoped>
