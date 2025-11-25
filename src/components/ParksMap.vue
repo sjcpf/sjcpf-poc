@@ -221,10 +221,8 @@ function createHeadingMarker() {
   headingMarker = new maplibregl.Marker({
     element: el,
     anchor: 'bottom',
-    pitchAlignment: "map"
-  });
-  headingMarker.addTo(map)
-  headingMarker.setOffset([0, -25])
+    pitchAlignment: 'map'
+  }).setLngLat([0,0]).setOffset([0, -25]).addTo(map)
 }
 
 // Called when user toggles checkboxes
