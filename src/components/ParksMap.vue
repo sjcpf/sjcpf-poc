@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { parks, /*trailData, bikeTrailData*/ } from '@/shared/constants'
+import { bikeTrailData, parkBoundaryData, parks, trailData, /*trailData, bikeTrailData*/ } from '@/shared/constants'
 import { toLatLon } from 'geolocation-utils'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import maplibregl from 'maplibre-gl'
@@ -68,22 +68,7 @@ async function removeIfExists(id: string, type: 'layer' | 'source') {
   }
 }
 
-// WIP Trails Layer
-/*async function addTrailsLayer() {
-  if (!map) return
-
-  await removeIfExists('trails-layer', 'layer')
-  await removeIfExists('parks', 'source')
-
-  const trailLines: GeoJSON.FeatureCollection<GeoJSON.Geometry> = {
-    type: 'FeatureCollection',
-    features: trailData.map(p => {
-      const featureCoords = p.geoJSON.
-    })
-  }
-}*/
-
-async function addParksLayer() {
+async function addParkLocationsLayer() {
   if (!map) return
   // remove existing to avoid duplicate-id errors
   await removeIfExists('parks-layer', 'layer')
@@ -140,6 +125,83 @@ async function addParksLayer() {
       }
     });
   }
+}
+
+function addTrailLayer() {
+  if (!map) return;
+
+  // 1 source per dataset
+  map.addSource("trails", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: trailData.map(t => t.geoJSON),
+    }
+  });
+
+  map.addLayer({
+    id: "trails-line",
+    type: "line",
+    source: "trails",
+    paint: {
+      "line-color": "#d26400",
+      "line-width": 3,
+    }
+  });
+}
+
+function addBikeTrailsLayer() {
+  if (!map) return;
+
+  map.addSource("bike-trails", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: bikeTrailData.map(t => t.geoJSON),
+    }
+  });
+
+  map.addLayer({
+    id: "bike-trails-line",
+    type: "line",
+    source: "bike-trails",
+    paint: {
+      "line-color": "",
+      "line-width": 3
+    }
+  });
+}
+
+function addParkBoundariesLayer() {
+  if (!map) return;
+
+  map.addSource("park-boundaries", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: parkBoundaryData.map(b => b.geoJSON),
+    }
+  });
+
+  map.addLayer({
+    id: "park-boundaries-fill",
+    type: "fill",
+    source: "park-boundaries",
+    paint: {
+      "fill-color": "#3cb043",
+      "fill-opacity": 0.3
+    }
+  });
+
+  map.addLayer({
+    id: "park-boundaries-outline",
+    type: "line",
+    source: "park-boundaries",
+    paint: {
+      "line-color": "#000000",
+      "line-width": 2
+    }
+  });
 }
 
 /** Some iOS Safari builds expose this permission request function. */
@@ -210,19 +272,17 @@ function createHeadingMarker() {
   el.style.width = "24px"
   el.style.height = "24px"
   el.style.border = "8px solid transparent"
-  el.style.borderBottom = "14px solid #4287f5" // arrow color
+  el.style.borderBottom = "28px solid #4287f5" // arrow color
   el.style.borderRadius = "2px"
   el.style.transform = ""
   el.style.transformOrigin = "center"
   el.style.position = "relative"
-  el.style.left = "50%"
-  el.style.top = "50%"
 
   headingMarker = new maplibregl.Marker({
     element: el,
     anchor: 'bottom',
     pitchAlignment: 'map'
-  }).setLngLat([0,0]).setOffset([0, -25]).addTo(map)
+  }).setLngLat([0,0]).setOffset([0, -15]).addTo(map)
 }
 
 // Called when user toggles checkboxes
@@ -234,7 +294,10 @@ function updateMap() {
   // After the style loads, re-add custom sources/layers (parks) so they persist
   map.once('styledata', async () => {
     // Re-add parks (and any other custom overlays you need)
-    await addParksLayer()
+    await addTrailLayer()
+    await addBikeTrailsLayer()
+    await addParkBoundariesLayer()
+    await addParkLocationsLayer()
   })
 }
 
@@ -277,6 +340,11 @@ onMounted(async () => {
 
   geo.on("trackuserlocationend", () => {
     map?.off("render", updateMarkerPosition);
+    if (headingMarker)
+    {
+      headingMarker.remove()
+      headingMarker = null
+    }
   });
 
   function updateMarkerPosition() {
@@ -287,7 +355,10 @@ onMounted(async () => {
 
   map.on('load', async () => {
     // initial add of parks
-    await addParksLayer()
+    await addTrailLayer()
+    await addBikeTrailsLayer()
+    await addParkBoundariesLayer()
+    await addParkLocationsLayer()
     createHeadingMarker()
   })
 
