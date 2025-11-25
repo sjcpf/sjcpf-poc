@@ -166,7 +166,7 @@ function addBikeTrailsLayer() {
     type: "line",
     source: "bike-trails",
     paint: {
-      "line-color": "",
+      "line-color": "#FFA500",
       "line-width": 3
     }
   });
