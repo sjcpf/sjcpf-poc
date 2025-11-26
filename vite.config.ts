@@ -23,7 +23,7 @@ export default defineConfig({
   },
   // To enable self-secured https over local network for remote GPS debugging on mobile
   // !!! DISABLE THIS BEFORE PUSHING TO MAIN !!!
-  /*server: {
+  /* server: {
     host: true,
     port: 5173,
     https: {
