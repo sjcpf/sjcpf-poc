@@ -329,18 +329,18 @@ onMounted(async () => {
 
   map.addControl(geo);
 
-  geo.on("geolocate", (pos) => {
+  geo.on("geolocate", () => {
     if (!headingMarker)
-      createHeadingMarker();
-    headingMarker?.setLngLat([pos.longitude, pos.latitude]);
+      createHeadingMarker()
+    updateMarkerPosition()
   });
 
   geo.on("trackuserlocationstart", () => {
-    map?.on("render", updateMarkerPosition);
+    map?.on("render", updateMarkerPosition)
   });
 
   geo.on("trackuserlocationend", () => {
-    map?.off("render", updateMarkerPosition);
+    map?.off("render", updateMarkerPosition)
     if (headingMarker && !userPanned)
     {
       headingMarker.remove()
@@ -349,9 +349,9 @@ onMounted(async () => {
   });
 
   function updateMarkerPosition() {
-    const pos = geo._lastKnownPosition;
-    if (!pos || !headingMarker) return;
-    headingMarker.setLngLat([pos.coords.longitude, pos.coords.latitude]);
+    const pos = geo._lastKnownPosition
+    if (!pos || !headingMarker) return
+    headingMarker.setLngLat([pos.coords.longitude, pos.coords.latitude])
   }
 
   map.on('load', async () => {
