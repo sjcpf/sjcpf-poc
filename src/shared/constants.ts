@@ -26,7 +26,7 @@ export const parks: Park[] = [
     name: 'Bendix Woods',
     image: '/images/parks/bendix_woods.webp',
     phone: '(574) 654-3155',
-    location: {lat: 41.66972, lon: -86.48833 },
+    location: {lat: 41.66972, lon: -86.49833 },
     address: '56960 Timothy Road New Carlisle, IN 46552-9522',
     city: 'New Carlisle',
     state: 'IN',
