@@ -243,13 +243,14 @@ function setupCompass() {
 
     // Standard deviceorientation alpha
     else if (typeof e.alpha === "number") {
-      headingSupported.value = true;
       h = 360 - ((e.alpha - 90) % 360)
     }
 
-    if (h !== null && !Number.isNaN(h) && headingMarker) {
+    if (h !== null && !Number.isNaN(h)) {
       headingSupported.value = true;
-      headingMarker.setRotation(h)
+
+      if (headingMarker)
+        headingMarker.setRotation(h)
     }
   };
 
