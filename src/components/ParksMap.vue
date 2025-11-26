@@ -244,6 +244,7 @@ function setupCompass() {
     }
     // Standard deviceorientation alpha
     else if (!isIOS && typeof e.alpha === "number") {
+      headingSupported.value = true;
       h = (e.alpha * -1) + 90;
     }
 
