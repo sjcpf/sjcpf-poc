@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { bikeTrailData, parkBoundaryData, parks, trailData, /*trailData, bikeTrailData*/ } from '@/shared/constants'
 import { toLatLon } from 'geolocation-utils'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
 import maplibregl from 'maplibre-gl'
 import { withAPIKey } from '@aws/amazon-location-utilities-auth-helper'
 import { useGeolocation } from '@/utils/useGeolocation'
@@ -27,6 +27,7 @@ import { useGeolocation } from '@/utils/useGeolocation'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 const { location } = useGeolocation()
+const headingSupported = ref(false);
 let headingMarker: maplibregl.Marker | null = null
 let userPanned = false;
 
@@ -244,7 +245,8 @@ function setupCompass() {
       h = 360 - ((e.alpha - 90) % 360)
     }
 
-    if (h !== null && headingMarker) {
+    if (h !== null && !Number.isNaN(h) && headingMarker) {
+      headingSupported.value = true;
       headingMarker.setRotation(h)
     }
   };
@@ -330,7 +332,7 @@ onMounted(async () => {
   map.addControl(geo);
 
   geo.on("geolocate", () => {
-    if (!headingMarker)
+    if (!headingMarker && headingSupported.value)
       createHeadingMarker()
     updateMarkerPosition()
   });
@@ -360,7 +362,7 @@ onMounted(async () => {
     await addBikeTrailsLayer()
     await addParkBoundariesLayer()
     await addParkLocationsLayer()
-    createHeadingMarker()
+    if (headingSupported.value) createHeadingMarker()
   })
 
   map.on("movestart", () => {
@@ -373,6 +375,14 @@ onMounted(async () => {
 
   setupCompass()
 })
+
+watch(headingSupported, (supported) => {
+  if (!supported && headingMarker) {
+    headingMarker.getElement().style.display = 'none';
+  } else if (supported && headingMarker) {
+    headingMarker.getElement().style.display = 'block';
+  }
+});
 
 onBeforeUnmount(() => {
   headingMarker?.remove();
