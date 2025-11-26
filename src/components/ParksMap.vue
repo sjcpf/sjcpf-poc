@@ -275,7 +275,7 @@ function createHeadingMarker() {
   el.style.borderBottom = "32px solid #4287f5" // arrow color
   el.style.borderRadius = "1px"
   el.style.transform = ""
-  el.style.transformOrigin = "50% 125%"
+  el.style.transformOrigin = "50% 50%"
   el.style.position = "relative"
 
   headingMarker = new maplibregl.Marker({
