@@ -29,9 +29,10 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 const { location } = useGeolocation()
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
   || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1
-const headingSupported = ref(false);
+const headingSupported = ref(false)
+let firstHeadingReceived = false
 let headingMarker: maplibregl.Marker | null = null
-let userPanned = false;
+let userPanned = false
 
 const awsRegion = 'us-east-2'
 const mapApiKey =
@@ -233,7 +234,7 @@ function hasDeviceOrientationPermission(
 
 // --- Compass setup ------------------------------------------------
 
-function setupCompass() {
+async function setupCompass() {
    const handler = (e: DeviceOrientationEvent) => {
     let h: number | null = null
 
@@ -248,17 +249,24 @@ function setupCompass() {
       h = (e.alpha * -1);
     }
 
-    if (h !== null && !Number.isNaN(h)) {
-      headingSupported.value = true;
+    if (h === null) return;
 
-      if (headingMarker)
-        headingMarker.setRotation(h)
-      else
-        createHeadingMarker()
-        headingMarker?.setRotation(h)
-    } else {
-      return false
+    if (!firstHeadingReceived) {
+      // ignore obviously bogus initial values
+      if (h === 0 || h === 90 || h === 180 || h === 270 || h === null || Number.isNaN(h)) return;
+
+      headingSupported.value = true;
+      firstHeadingReceived = true;
+
+      // Now we can create the marker
+      if (!headingMarker)
+        createHeadingMarker();
+
+      return;
     }
+
+    if (headingMarker)
+      headingMarker.setRotation(h)
   };
 
   // iOS requires explicit permission (if supported)
@@ -267,15 +275,15 @@ function setupCompass() {
       .then((state) => {
         if (state === "granted") {
           window.addEventListener("deviceorientation", handler, true);
+          return true
         }
       })
       .catch(console.warn);
   } else {
     // Normal browsers
     window.addEventListener("deviceorientation", handler, true);
+    return true
   }
-
-  return true
 }
 
 function createHeadingMarker() {
@@ -296,6 +304,7 @@ function createHeadingMarker() {
     anchor: 'bottom',
     pitchAlignment: 'map'
   }).setLngLat([0,0])/*.setOffset([0, 0])*/.addTo(map)
+  return headingMarker
 }
 
 // Called when user toggles checkboxes
