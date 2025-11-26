@@ -334,26 +334,6 @@ onMounted(async () => {
 
   map.addControl(geo);
 
-  geo.on("geolocate", () => {
-    if (!headingMarker && headingSupported.value)
-      createHeadingMarker()
-    updateMarkerPosition()
-  });
-
-  geo.on("trackuserlocationstart", () => {
-    map?.on("render", updateMarkerPosition)
-    if (headingSupported.value) createHeadingMarker()
-  });
-
-  geo.on("trackuserlocationend", () => {
-    map?.off("render", updateMarkerPosition)
-    if (headingMarker && !userPanned)
-    {
-      headingMarker.remove()
-      headingMarker = null
-    }
-  });
-
   function updateMarkerPosition() {
     const pos = geo._lastKnownPosition
     if (!pos || !headingMarker) return
@@ -367,6 +347,25 @@ onMounted(async () => {
     await addParkBoundariesLayer()
     await addParkLocationsLayer()
   })
+
+  geo.on("geolocate", () => {
+    if (!headingMarker && headingSupported.value) createHeadingMarker()
+    updateMarkerPosition()
+  });
+
+  geo.on("trackuserlocationstart", () => {
+    map?.on("render", updateMarkerPosition)
+    if (!headingMarker && !headingSupported.value) createHeadingMarker()
+  });
+
+  geo.on("trackuserlocationend", () => {
+    map?.off("render", updateMarkerPosition)
+    if (headingMarker && !userPanned)
+    {
+      headingMarker.remove()
+      headingMarker = null
+    }
+  });
 
   map.on("movestart", () => {
     userPanned = true;
