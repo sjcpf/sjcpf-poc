@@ -241,7 +241,7 @@ function setupCompass() {
 
     // Standard deviceorientation alpha
     else if (typeof e.alpha === "number") {
-      h = 360 - ((e.alpha + 90) % 360)
+      h = 360 - ((e.alpha - 90) % 360)
     }
 
     if (h !== null && headingMarker) {
