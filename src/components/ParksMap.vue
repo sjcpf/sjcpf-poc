@@ -237,11 +237,13 @@ function setupCompass() {
 
     // iOS Safari heading
     if (isIOSDeviceOrientationEvent(e)) {
+      headingSupported.value = true;
       h = e.webkitCompassHeading
     }
 
     // Standard deviceorientation alpha
     else if (typeof e.alpha === "number") {
+      headingSupported.value = true;
       h = 360 - ((e.alpha - 90) % 360)
     }
 
