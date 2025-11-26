@@ -270,19 +270,19 @@ function createHeadingMarker() {
 
   const el = document.createElement("div")
   el.style.width = "24px"
-  el.style.height = "24px"
+  el.style.height = "32px"
   el.style.border = "12px solid transparent"
   el.style.borderBottom = "32px solid #4287f5" // arrow color
   el.style.borderRadius = "1px"
   el.style.transform = ""
-  el.style.transformOrigin = "50% 50%"
+  el.style.transformOrigin = "50% 100%"
   el.style.position = "relative"
 
   headingMarker = new maplibregl.Marker({
     element: el,
-    anchor: 'center',
+    anchor: 'bottom',
     pitchAlignment: 'map'
-  }).setLngLat([0,0]).setOffset([0, 0]).addTo(map)
+  }).setLngLat([0,0])/*.setOffset([0, 0])*/.addTo(map)
 }
 
 // Called when user toggles checkboxes
