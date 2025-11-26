@@ -255,6 +255,7 @@ function setupCompass() {
         headingMarker.setRotation(h)
       else
         createHeadingMarker()
+        headingMarker?.setRotation(h)
     } else {
       return false
     }
