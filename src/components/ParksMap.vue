@@ -27,6 +27,8 @@ import { useGeolocation } from '@/utils/useGeolocation'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
 const { location } = useGeolocation()
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+  || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1
 const headingSupported = ref(false);
 let headingMarker: maplibregl.Marker | null = null
 let userPanned = false;
@@ -236,14 +238,17 @@ function setupCompass() {
     let h: number | null = null
 
     // iOS Safari heading
-    if (isIOSDeviceOrientationEvent(e)) {
+    if (isIOSDeviceOrientationEvent(e) && e.webkitCompassHeading != null) {
       headingSupported.value = true;
-      h = e.webkitCompassHeading
+      h = e.webkitCompassHeading;
+    }
+    // Standard deviceorientation alpha
+    else if (!isIOS && typeof e.alpha === "number") {
+      h = (e.alpha * -1) + 90;
     }
 
-    // Standard deviceorientation alpha
-    else if (typeof e.alpha === "number") {
-      h = 360 - ((e.alpha - 90) % 360)
+    else {
+      return
     }
 
     if (h !== null && !Number.isNaN(h)) {
@@ -334,10 +339,9 @@ onMounted(async () => {
 
   map.addControl(geo);
 
-  function updateMarkerPosition() {
-    const pos = geo._lastKnownPosition
+  function updateMarkerPosition(pos: GeolocationCoordinates) {
     if (!pos || !headingMarker) return
-    headingMarker.setLngLat([pos.coords.longitude, pos.coords.latitude])
+    headingMarker.setLngLat([pos.longitude, pos.latitude])
   }
 
   map.on('load', async () => {
@@ -348,14 +352,17 @@ onMounted(async () => {
     await addParkLocationsLayer()
   })
 
-  geo.on("geolocate", () => {
+  geo.on("geolocate", (e) => {
     if (!headingMarker && headingSupported.value) createHeadingMarker()
-    updateMarkerPosition()
+    updateMarkerPosition(e.coords)
   });
 
   geo.on("trackuserlocationstart", () => {
     map?.on("render", updateMarkerPosition)
-    if (!headingMarker && !headingSupported.value) createHeadingMarker()
+    if (!headingMarker && headingSupported.value) {
+      setupCompass()
+      createHeadingMarker()
+    }
   });
 
   geo.on("trackuserlocationend", () => {
@@ -374,9 +381,11 @@ onMounted(async () => {
   map.on("moveend", () => {
     userPanned = false;
   })
-
-  setupCompass()
 })
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') setupCompass();
+});
 
 onBeforeUnmount(() => {
   headingMarker?.remove();
