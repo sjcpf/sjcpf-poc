@@ -248,18 +248,17 @@ function setupCompass() {
       h = (e.alpha * -1) + 90;
     }
 
-    else {
-      return
-    }
-
     if (h !== null && !Number.isNaN(h)) {
       headingSupported.value = true;
 
       if (headingMarker)
         headingMarker.setRotation(h)
+      else
+        createHeadingMarker()
+    } else {
+      return false
     }
   };
-
 
   // iOS requires explicit permission (if supported)
   if (hasDeviceOrientationPermission(DeviceOrientationEvent)) {
@@ -274,6 +273,8 @@ function setupCompass() {
     // Normal browsers
     window.addEventListener("deviceorientation", handler, true);
   }
+
+  return true
 }
 
 function createHeadingMarker() {
@@ -355,19 +356,20 @@ onMounted(async () => {
 
   geo.on("geolocate", (e) => {
     if (!headingMarker && headingSupported.value) createHeadingMarker()
+    // console.log('GPS Update: ', e.coords)
     updateMarkerPosition(e.coords)
   });
 
-  geo.on("trackuserlocationstart", () => {
-    map?.on("render", updateMarkerPosition)
+  geo.on("trackuserlocationstart", async () => {
+    //map?.on("render", updateMarkerPosition)
+    await setupCompass()
     if (!headingMarker && headingSupported.value) {
-      setupCompass()
       createHeadingMarker()
     }
   });
 
   geo.on("trackuserlocationend", () => {
-    map?.off("render", updateMarkerPosition)
+    //map?.off("render", updateMarkerPosition)
     if (headingMarker && !userPanned)
     {
       headingMarker.remove()
