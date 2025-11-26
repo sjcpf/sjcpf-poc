@@ -282,7 +282,7 @@ function createHeadingMarker() {
     element: el,
     anchor: 'center',
     pitchAlignment: 'map'
-  }).setLngLat([0,0]).setOffset([0, -25]).addTo(map)
+  }).setLngLat([0,0]).setOffset([0, 0]).addTo(map)
 }
 
 // Called when user toggles checkboxes
