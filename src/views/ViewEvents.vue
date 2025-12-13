@@ -35,13 +35,17 @@ import PageResponsive from '@/components/page/PageResponsive.vue';
       <div>
         <h4 class="info-subheader">Nature & History</h4>
         <ul class="bullet-list">
-          <li class="bullet-point">Discover our programs for schools and libraries.</li>
+          <li class="bullet-point">
+            <a :href="'https://www.sjcparks.org/565/Nature-History'">Discover our programs for schools and libraries.</a>
+          </li>
         </ul>
       </div>
       <div>
         <h4 class="info-subheader">Activity Guide</h4>
         <ul class="bullet-list">
-          <li class="bullet-point">Our Activity Guide is going green!</li>
+          <li class="bullet-point">
+            <a :href="'https://issuu.com/sjcparks'">Our Activity Guide is going green!</a>
+          </li>
         </ul>
       </div>
     </div>

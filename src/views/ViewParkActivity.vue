@@ -55,8 +55,9 @@ console.log("ActivityType:", activityType?.value);
           <span><a :href="'tel:' + park?.phone" target="_blank">{{park?.phone}}</a></span>
         </div>
         <div v-if="park?.address" class="row items-center">
-          <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
-          <span><a
+          <span>
+            <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
+            <a
               :href="'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(park?.address || '')"
               target="_blank"
             >

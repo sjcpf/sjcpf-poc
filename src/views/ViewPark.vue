@@ -5,7 +5,7 @@ import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons'
 import { biTree } from '@quasar/extras/bootstrap-icons'
 import { evaPhoneCallOutline } from '@quasar/extras/eva-icons'
 import { useMeta } from 'quasar'
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 useMeta({ title: `${appName} - Park Information` })
@@ -16,6 +16,11 @@ const park = ref<Park | undefined>(
   parks.find(p => p.id === Number(route.params.park))
 );
 
+const parkFeatures = computed(() => {
+  const length = park.value?.features?.length;
+  return length && length > 0 ? park.value?.features : undefined
+});
+
 const parkActivities = computed(() => {
   return activities.filter(a => a?.park === park.value?.id);
 });
@@ -24,7 +29,19 @@ const parkTrails = computed(() => {
   return trails.filter(t => t?.park === park.value?.id);
 });
 
-console.log(parkTrails);
+const parkEdu = computed(() => {
+  const length = park.value?.education?.length;
+  return length && length > 0 ? park.value?.education : undefined
+});
+
+const parkDocs = computed(() => {
+  const length = park.value?.documents?.length;
+  return length && length > 0 ? park.value?.documents : undefined
+});
+
+onMounted(() => {
+  window.scrollTo({ top: 0, left: 0 })
+})
 
 </script>
 
@@ -69,47 +86,59 @@ console.log(parkTrails);
           <span>{{ park?.description }}</span>
         </div>
         <h5 class="text-subtitle1 q-mb-sm">Unique Features:</h5>
-        <ul>
-          <li>
-            Data here soon!
-          </li>
+        <ul class="bullet-list">
+          <li
+            v-for="(feature, i) in parkFeatures"
+            :key="i"
+            v-html="feature"
+          ></li>
         </ul>
-        <h5 class="text-subtitle1 q-mb-sm">Activities:</h5>
-        <ul>
-          <li v-for="act in parkActivities" :key="act.id" class="q-mb-sm">
-            <!--<q-icon :name="" size="20px" class="q-mr-sm" />-->
-            <RouterLink
-              :to="`/parks/${act.park}/activities/${act.id}`"
-              class="text-primary"
-            >
-              {{ activityTypes[act.activityType]?.label }}
-            </RouterLink>
-          </li>
-        </ul>
-        <h5 class="text-subtitle1 q-mb-sm">Trails:</h5>
-        <ul>
-          <li v-for="trail in parkTrails" :key="trail.id" class="q-mb-sm">
-            <!--<q-icon :name="" size="20px" class="q-mr-sm" />-->
-            <RouterLink
-              :to="`/parks/${trail.park}/trails/${trail.id}`"
-              class="text-primary"
-            >
-              {{ trails.find(t => t.id === trail.id)?.name }}
-            </RouterLink>
-          </li>
-        </ul>
-        <h5 class="text-subtitle1 q-mb-sm">Educational Programs:</h5>
-        <ul>
-          <li>
-            Data here soon!
-          </li>
-        </ul>
-        <h5 class="text-subtitle1 q-mb-sm">Additional Documents:</h5>
-        <ul>
-          <li>
-            Data here soon!
-          </li>
-        </ul>
+        <div v-if="parkActivities.length > 0">
+          <h5 class="text-subtitle1 q-mb-sm">Activities:</h5>
+          <ul>
+            <li v-for="act in parkActivities" :key="act.id" class="q-mb-sm">
+              <!--<q-icon :name="" size="20px" class="q-mr-sm" />-->
+              <RouterLink
+                :to="`/parks/${act.park}/activities/${act.id}`"
+                class="text-primary"
+              >
+                {{ activityTypes[act.activityType]?.label }}
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+        <div v-if="parkTrails.length > 0">
+          <h5 class="text-subtitle1 q-mb-sm">Trails:</h5>
+          <ul>
+            <li v-for="trail in parkTrails" :key="trail.id" class="q-mb-sm">
+              <!--<q-icon :name="" size="20px" class="q-mr-sm" />-->
+              <RouterLink
+                :to="`/parks/${trail.park}/trails/${trail.id}`"
+                class="text-primary"
+              >
+                {{ trails.find(t => t.id === trail.id)?.name }}
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+        <div v-if="parkEdu">
+          <h5 class="text-subtitle1 q-mb-sm">Educational Programs:</h5>
+          <ul>
+            <li
+              v-for="(edu, i) in parkEdu"
+              :key="i"
+              v-html="edu"
+            ></li>
+          </ul>
+        </div>
+        <div v-if="parkDocs">
+          <h5 class="text-subtitle1 q-mb-sm">Additional Documents:</h5>
+          <ul>
+            <li v-for="doc in parkDocs" :key="doc.label">
+              <a :href="doc.url" target="_blank">{{ doc.label }}</a>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- Social Share -->
@@ -169,5 +198,15 @@ console.log(parkTrails);
   border-top-right-radius: 100% 100px;
   justify-content: center;
   align-items: center;
+}
+.bullet-list {
+  margin-top: 10px;
+  margin-bottom: 26px;
+}
+.bullet-point {
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 12px; /* 120% */
 }
 </style>

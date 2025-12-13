@@ -14,10 +14,11 @@ export type Park = {
   address: string;
   city: string;
   state: string;
+  features: string[];
   details: string[];
-  activities: number[];
   description: string;
   documents: { label: string; url: string }[];
+  education: string[];
   boundaryGeoJSON?: number;
 };
 
@@ -28,13 +29,42 @@ export const parks: Park[] = [
     image: '/images/parks/bendix_woods.webp',
     phone: '(574) 654-3155',
     location: {lat: 41.66972, lon: -86.49833 },
-    address: '56960 Timothy Road New Carlisle, IN 46552-9522',
+    address: '56960 Timothy Road New Carlisle, IN 46552',
     city: 'New Carlisle',
     state: 'IN',
+    features: [
+      '<a href="https://www.sjcparks.org/DocumentCenter/View/27836/Studebaker-Bendix-Heritage-Trail_2019">Studebaker-Bendix Heritage Trail</a>',
+      'Home to the second highest point in St. Joseph County',
+      '27-acre State Dedicated Nature Preserve',
+      'Historic pine trees planted in the 1930s to spell "Studebaker," listed in the Guinness Book of Records and the National Historic Register',
+      'Historic Studebaker Clubhouse - <a href="https://www.sjcparks.org/DocumentCenter/View/3532">Brochure</a>',
+      'A featured destination on the <a href="https://indianabirdingtrail.com/pages/bendix-woods-county-park-birding-opportunities">Indiana Birding Trail</a>'
+    ],
     details: ['195 acres with wooded trails, ponds and fields'],
-    activities: [],
     description: 'A large forested park with many activities',
-    documents: [],
+    education: [
+      'Wildflower and tree studies',
+      'Nature hikes and pond studies',
+      'Maple syrup tapping <b>(February and March)</b> - <a href="https://www.sjcparks.org/DocumentCenter/View/3526">Tapping at Home Brochure (PDF)</a>'
+    ],
+    documents: [
+      {
+        label: 'Bendix Woods County Park Master Plan Map 2019-2023',
+        url: 'https://www.sjcparks.org/572/Bendix-Woods-County-Park#:~:text=Bendix%20Woods%20County%20Park%20Master%20Plan%20Map%202019%2D2023'
+      },
+      {
+        label: 'Bendix Woods Mountain Bike Trail (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3629/Bendix-Woods-Mountain-Bike-Trail-PDF'
+      },
+      {
+        label: 'Bendix Woods Trail Map (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3628/Bendix-Woods-Trail-Map-PDF'
+      },
+      {
+        label: 'Driving Directions (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3528/Driving-Directions-PDF'
+      }
+    ],
     boundaryGeoJSON: 2
   },
   {
@@ -46,10 +76,27 @@ export const parks: Park[] = [
     address: 'Jackson Road and Linden Road South Bend, IN 46614',
     city: 'South Bend',
     state: 'IN',
+    features: [
+      'This 111-acre property is a former landfill that is now being restored and managed as a natural area and passive recreation site.',
+      'The St. Joseph County Board of Commissioners holds the land title.',
+      'The site is jointly managed by the Department of Public Works and St. Joseph County Parks.',
+      'A designated destination on the <a href="https://indianabirdingtrail.com/pages/bendix-woods-county-park-birding-opportunities">Indiana Birding Trail</a>',
+      'Nesting habitat for several species of endangered birds (see the Indiana Audubon article on the Crone Restoration Area)',
+      'Gravel walking and biking path.'
+    ],
     details: ['111 acres of undeveloped land'],
-    activities: [],
     description: 'A medium park featuring easy trails and fields',
-    documents: [],
+    education: [],
+    documents: [
+      {
+        label: 'Crone Restoration Area Master Plan Map 2019-2023',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/27716/Crone-Restoration-Area-Master-Plan-Map-2019-2023'
+      },
+      {
+        label: 'Indiana Audubon Article on Crone Restoration Area (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3547/Indiana-Audubon-Article-on-Crone-Restoration-Area-PDF'
+      }
+    ],
     boundaryGeoJSON: 3
   },
   {
@@ -61,10 +108,22 @@ export const parks: Park[] = [
     address: '58111 Crumstown Highway South Bend, IN 46619',
     city: 'South Bend',
     state: 'IN',
+    features: [
+      'Managed cooperatively by the Indiana Department of Natural Resources and St. Joseph County Parks',
+      '1.5 miles of trails winding through woods, fields, and along the edge of Chamberlain Lake',
+      'Habitat for several rare and endangered plant species',
+      'Designated State Nature Preserve',
+      '<b> PLEASE NOTE:</b> This is a Carry-in, Carry-out site. There are no trash receptacles or picnic tables at the preserve.'
+    ],
     details: ['82.7 acres of lake and wetlands'],
-    activities: [],
     description: 'Woods, trails, wetlands, and a lake',
-    documents: [],
+    education: [],
+    documents: [
+      {
+        label: 'Chamberlain Lake Nature Preserve Master Plan Map 2019-2023',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/27714/Chamberlain-Lake-Nature-Preserve-Master-Plan-Map-2019-2023'
+      }
+    ],
     boundaryGeoJSON: 6
   },
   {
@@ -76,10 +135,31 @@ export const parks: Park[] = [
     address: '57057 Ash Road Osceola, IN 46561',
     city: 'Osceola',
     state: 'IN',
+    features: [
+      'Baugo Creek flows into the St. Joseph River',
+      'Park property was reclaimed from a former dump site',
+      'Stream Restoration Project - Spring/Summer 2007 (<a href="https://www.sjcparks.org/DocumentCenter/View/3541">Informational Brochure PDF</a>'
+    ],
     details: ['214 acres with trails along Baugo Creek, open fields'],
-    activities: [],
     description: 'A very large park with a small lake, creek, and trails',
-    documents: [],
+    education: [
+      'Programs on the fur trade and pioneer skills',
+      'Living history demonstrations'
+    ],
+    documents: [
+      {
+        label: 'Driving Directions (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3538/Driving-Directions-PDF'
+      },
+      {
+        label: 'Ferrettie Baugo Creek County Park Master Plan Map 2019-2023',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/27717/Ferrettie-Baugo-Creek-County-Park-Master-Plan-Map-2019-2023'
+      },
+      {
+        label: 'Ferrettie Baugo Creek Trail Map (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3630/Ferrettie-Baugo-Creek-Trail-Map-PDF'
+      }
+    ],
     boundaryGeoJSON: 4
   },
   {
@@ -91,10 +171,22 @@ export const parks: Park[] = [
     address: '19701 Cleveland Rd South Bend, IN 46637',
     city: 'South Bend',
     state: 'IN',
+    features: [
+      'Groundbreaking ceremony held May 11, 2001',
+      '3.5-mile paved trail',
+      'Part of the Indiana-Michigan River Valley Trail <a href="https://www.sjcparks.org/DocumentCenter/View/26548/Indiana-Michigan-River-Valley-Trail-Map">(PDF)</a>',
+      'Built along the corridor of the former Interurban line that ran from South Bend to Niles, Michigan, operated by the Indiana Railway Co. subsidiary South Bend and Southern Michigan Railway Co., opened in 1903',
+      '<b>IMPORTANT NOTE:</b> No motorized traffic is allowed, except electric wheelchairs/scooters and authorized emergency vehicles'
+    ],
     details: ['12.61 Acres along a paved trail from Roseland to the north state line, connecting with Niles Township trails'],
-    activities: [],
     description: 'A 3.5 mile paved trail',
-    documents: [],
+    education: [],
+    documents: [
+      {
+        label: 'LaSalle Trail Master Plan Map 2019-2023',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/27710/LaSalle-Trail-Master-Plan-Map-2019-2023'
+      }
+    ],
     boundaryGeoJSON: 7
   },
   {
@@ -106,10 +198,35 @@ export const parks: Park[] = [
     address: '50840 County Line Road New Carlisle, IN 46552-4564',
     city: 'New Carlisle',
     state: 'IN',
+    features: [
+      'Home to several endangered plants and animals',
+      'Boardwalk provides access through a portion of the wetland',
+      'A designated destination on the <a href="https://indianabirdingtrail.com/pages/bendix-woods-county-park-birding-opportunities">Indiana Birding Trail</a>'
+    ],
     details: ['320 acres with trails along wetlands, woods and old-growth fields'],
-    activities: [],
     description: 'A large park with many trails woods, fields, and wetlands',
-    documents: [],
+    education: [
+      'Habitat studies, including use of the Wetlab',
+      'Guided nature hikes'
+    ],
+    documents: [
+      {
+        label: 'Spicer Lake BioBlitz Survey (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3594/Spicer-Lake-BioBlitz-Survey-PDF'
+      },
+      {
+        label: 'Spicer Lake Brochure (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3596/Spicer-Lake-Brochure-PDF'
+      },
+      {
+        label: 'Spicer Lake Nature Preserve Master Plan Map 2019-2023',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/27711/Spicer-Lake-Nature-Preserve-Master-Plan-Map-2019-2023'
+      },
+      {
+        label: 'Spicer Lake Trail Map (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3595/Spicer-Lake-Trail-Map-PDF'
+      }
+    ],
     boundaryGeoJSON: 0
   },
   {
@@ -121,10 +238,41 @@ export const parks: Park[] = [
     address: '50651 Laurel Road South Bend, IN 46637',
     city: 'South Bend',
     state: 'IN',
+    features: [
+      'Freedom Memorial: "Standing Tall"',
+      'Live <a href="https://environmentalchange.nd.edu/resources/nd-leef/live-bald-eagle-cam/">Bald Eagle Cam</a> at St. Patrick\'s County Park',
+      'Notre Dame linked <a href="http://environmentalchange.nd.edu/resources/nd-leef/">Experimental Exosystem Facility</a>',
+      'The Red Barn, one of the largest wooden barns in the county',
+      'Robert J. Fischgrund Center for the Performing Arts',
+      'A designated destination on the <a href="https://indianabirdingtrail.com/pages/bendix-woods-county-park-birding-opportunities">Indiana Birding Trail</a>',
+      'Public Access Boat Ramp for the St. Joseph River',
+      'Picnic sites - <a href="https://www.sjcparks.org/624/Rental-Facilities">Rental Facilities Listing</a>'
+    ],
     details: ['398 acres with wooded trails, ponds and St. Joseph River frontage'],
-    activities: [],
     description: 'A large park along the St. Joseph River with trails and ponds',
-    documents: [],
+    education: [],
+    documents: [
+      {
+        label: 'Driving Directions To St. Patrick\'s County Park (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3603/Driving-Directions-to-St-Patricks-County-Park-PDF'
+      },
+      {
+        label: 'Manion Cabin Brochure (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3606/Manion-Cabin-Brochure-PDF'
+      },
+      {
+        label: 'Orchard Brochure (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3607/Orchard-Brochure-PDF'
+      },
+      {
+        label: 'St. Patrick\'s County Park Master Plan Map 2019-2023',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/27719/St-Patricks-County-Park-Master-Plan-Map-2019-2023'
+      },
+      {
+        label: 'St. Patricks Trail Map (PDF)',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/3633/St-Patricks-Trail-Map-PDF'
+      }
+    ],
     boundaryGeoJSON: 1
   },
 ];
@@ -535,9 +683,10 @@ export const activities: Activity[] = [
     dates: [{ start: 'April 1', end: 'September 30' }],
     times: [{ day: 'Saturday', times: { start: '09:00', end: '11:00' } }],
     details: [
+      'Next run: Saturday, August 15, 2026',
       'Outdoor activity program for children ages 6-12',
       'Registration required',
-      'Parental consent forms required'
+      'Parental consent forms required',
     ],
     description: 'Kids explore nature and learn outdoor skills in a fun, structured program at St. Patrick’s County Park.',
     documents: [
@@ -545,20 +694,9 @@ export const activities: Activity[] = [
     ]
   },
 
-  // 22: Hayrides Public
-  {
-    id: 22,
-    park: 0,
-    activityType: 'hayride',
-    details: [
-      ''
-    ],
-    description: 'Public hayrides scheduled throughout Fall. Check calendar of events for dates and times.'
-  },
-
   // 22–24: Playgrounds
   {
-    id: 23,
+    id: 22,
     park: 0,
     activityType: 'playground',
     dates: ['Daily'],

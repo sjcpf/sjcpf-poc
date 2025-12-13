@@ -1,11 +1,12 @@
 <script lang='ts' setup>
-import { useRoute } from 'vue-router'
-import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { computed, ref, watch } from 'vue'
 import { activityTypes, activities, parks, trails } from '@/shared/constants'
 import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 
 const route = useRoute()
+const router = useRouter()
 
 const activityTypeKey = route.params.activity as string;
 const activityType = ref(activityTypes[activityTypeKey]);
@@ -44,6 +45,20 @@ const filteredActivities = computed(() => {
     return Object.values(parkMap);
   }
 });
+
+
+watch(
+  () => filteredActivities.value,
+  (acts) => {
+    if (acts.length === 1) {
+      const act = acts[0]
+      router.replace(
+        `/parks/${act.park}/activities/${act.id}`
+      )
+    }
+  },
+  { immediate: true }
+)
 
 const getPark = (parkId: number) => parks.find(p => p.id === parkId);
 </script>

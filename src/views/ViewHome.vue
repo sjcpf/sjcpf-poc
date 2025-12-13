@@ -108,8 +108,8 @@ const homeActivityKeys: (keyof typeof activityTypes)[] = [
     </div>
     <div class="curved-section flex overflow-hidden">
       <!-- Content within the curved section goes here -->
-      <h5 class="bottom-text-content support-heading">Support The Parks</h5>
-      <p class="bottom-text-content bottom-paragraph">Help us keep your county parks beautiful, safe, and open for everyone. Your support funds playgrounds, trails, events, and conservation efforts.</p>
+      <h5 class="bottom-text-content support-heading">Support The Parks Foundation</h5>
+      <p class="bottom-text-content bottom-paragraph">Your generosity can make a real difference. With your donation to the Parks Foundation, you help us inspire the next generation of outdoor enthusiasts, protect our natural spaces, and build a better future for our small corner of the planet. Join us in our mission today!</p>
       <q-btn
         class="bottom-text-content donate-button"
         color="primary"
@@ -197,8 +197,8 @@ const homeActivityKeys: (keyof typeof activityTypes)[] = [
   .support-heading {
     font-size: 18px;
     font-weight: 600;
-    margin-top: 40px;
-    margin-bottom: 22px;
+    margin-top: 30px;
+    margin-bottom: 11px;
   }
 
   .bottom-paragraph {
@@ -212,8 +212,8 @@ const homeActivityKeys: (keyof typeof activityTypes)[] = [
   .donate-button {
     width: 224px;
     height: 60px;
-    margin-top: 10px;
-    margin-bottom: 27px;
+    margin-top: 5px;
+    margin-bottom: 22px;
     color: #FFF;
     text-align: center;
     font-size: 15px;
