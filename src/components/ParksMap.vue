@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { bikeTrailData, parkBoundaryData, parks, trailData, /*trailData, bikeTrailData*/ } from '@/shared/constants'
+import { bikeTrailData, parkBoundaryData, parks, trailData, trails, /*trailData, bikeTrailData*/ } from '@/shared/constants'
 import { toLatLon } from 'geolocation-utils'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import maplibregl from 'maplibre-gl'
@@ -25,6 +25,12 @@ import { withAPIKey } from '@aws/amazon-location-utilities-auth-helper'
 import { useGeolocation } from '@/utils/useGeolocation'
 
 import 'maplibre-gl/dist/maplibre-gl.css'
+
+const props = defineProps<{
+  trailId?: number,
+  bikeTrailId?: number,
+  parkId?: number
+}>()
 
 const { location } = useGeolocation()
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
@@ -131,15 +137,25 @@ async function addParkLocationsLayer() {
   }
 }
 
-function addTrailLayer() {
-  if (!map) return;
+function addTrailLayer(trailId?: number) {
+  if (!map || trailId === -1) return;
+  const trail = trails.find(t => t.id === trailId)
+  if (trailId !== undefined && trail?.geoJSON === undefined) return;
+  console.log('Got Foot Trail:', trail)
 
   // 1 source per dataset
   map.addSource("trails", {
     type: "geojson",
     data: {
       type: "FeatureCollection",
-      features: trailData.map(t => t.geoJSON),
+      features: trailData
+        .filter(t =>
+          trailId === undefined ||
+          (Array.isArray(trail?.geoJSON)
+            ? trail.geoJSON.includes(t.id)
+            : t.id === trail?.geoJSON)
+        )
+        .map(t => t.geoJSON),
     }
   });
 
@@ -154,14 +170,19 @@ function addTrailLayer() {
   });
 }
 
-function addBikeTrailsLayer() {
-  if (!map) return;
+function addBikeTrailsLayer(trailId?: number) {
+  if (!map || trailId === -1) return;
+  const trail = trails.find(t => t.id === trailId)
+  if (trailId !== undefined && trail?.geoJSON === undefined) return;
+  console.log('Got Bike Trail:', trail)
 
   map.addSource("bike-trails", {
     type: "geojson",
     data: {
       type: "FeatureCollection",
-      features: bikeTrailData.map(t => t.geoJSON),
+      features: bikeTrailData
+        .filter(t => trailId === undefined || t.id === trail?.geoJSON)
+        .map(t => t.geoJSON),
     }
   });
 
@@ -176,14 +197,19 @@ function addBikeTrailsLayer() {
   });
 }
 
-function addParkBoundariesLayer() {
-  if (!map) return;
+function addParkBoundariesLayer(parkId?: number) {
+  if (!map || parkId === -1) return;
+  const park = parks.find(p => p.id === parkId)
+  if (parkId !== undefined && park?.boundaryGeoJSON === undefined) return;
+  console.log('Got Park:', park)
 
   map.addSource("park-boundaries", {
     type: "geojson",
     data: {
       type: "FeatureCollection",
-      features: parkBoundaryData.map(b => b.geoJSON),
+      features: parkBoundaryData
+        .filter(p => parkId === undefined || p.id === park?.boundaryGeoJSON)
+        .map(p => p.geoJSON),
     }
   });
 
@@ -316,21 +342,22 @@ function updateMap() {
   // After the style loads, re-add custom sources/layers (parks) so they persist
   map.once('styledata', async () => {
     // Re-add parks (and any other custom overlays you need)
-    await addTrailLayer()
-    await addBikeTrailsLayer()
-    await addParkBoundariesLayer()
+    await addTrailLayer(props.trailId ?? undefined)
+    await addBikeTrailsLayer(props.bikeTrailId ?? undefined)
+    await addParkBoundariesLayer(props.parkId ?? undefined)
     await addParkLocationsLayer()
   })
 }
 
 onMounted(async () => {
   await withAPIKey(mapApiKey)
+  const park = parks.find(p => p.id === props.parkId);
 
   map = new maplibregl.Map({
     container: mapContainer.value!,
-    center: toLatLon(location.value),
+    center: park ? toLatLon(park.location) : toLatLon(location.value),
     style: getStyleUrl(), // use the dynamic URL generator
-    zoom: 11,
+    zoom: 14,
     pitch: 0,
     bearing: 0,
     validateStyle: false,
@@ -357,10 +384,14 @@ onMounted(async () => {
   }
 
   map.on('load', async () => {
+    console.log('Trail Id:', props.trailId ?? 'tailId missing')
+    console.log('Bike Trail Id:', props.bikeTrailId ?? 'bikeTrailId missing')
+    console.log('Park Id:', props.parkId ?? 'parkId missing')
+
     // initial add of parks
-    await addTrailLayer()
-    await addBikeTrailsLayer()
-    await addParkBoundariesLayer()
+    await addTrailLayer(props.trailId ?? undefined)
+    await addBikeTrailsLayer(props.bikeTrailId ?? undefined)
+    await addParkBoundariesLayer(props.parkId ?? undefined)
     await addParkLocationsLayer()
   })
 

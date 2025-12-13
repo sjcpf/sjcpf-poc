@@ -18,6 +18,7 @@ export type Park = {
   activities: number[];
   description: string;
   documents: { label: string; url: string }[];
+  boundaryGeoJSON?: number;
 };
 
 export const parks: Park[] = [
@@ -33,7 +34,8 @@ export const parks: Park[] = [
     details: ['195 acres with wooded trails, ponds and fields'],
     activities: [],
     description: 'A large forested park with many activities',
-    documents: []
+    documents: [],
+    boundaryGeoJSON: 2
   },
   {
     id: 1,
@@ -47,7 +49,8 @@ export const parks: Park[] = [
     details: ['111 acres of undeveloped land'],
     activities: [],
     description: 'A medium park featuring easy trails and fields',
-    documents: []
+    documents: [],
+    boundaryGeoJSON: 3
   },
   {
     id: 2,
@@ -61,7 +64,8 @@ export const parks: Park[] = [
     details: ['82.7 acres of lake and wetlands'],
     activities: [],
     description: 'Woods, trails, wetlands, and a lake',
-    documents: []
+    documents: [],
+    boundaryGeoJSON: 6
   },
   {
     id: 3,
@@ -75,7 +79,8 @@ export const parks: Park[] = [
     details: ['214 acres with trails along Baugo Creek, open fields'],
     activities: [],
     description: 'A very large park with a small lake, creek, and trails',
-    documents: []
+    documents: [],
+    boundaryGeoJSON: 4
   },
   {
     id: 4,
@@ -89,7 +94,8 @@ export const parks: Park[] = [
     details: ['12.61 Acres along a paved trail from Roseland to the north state line, connecting with Niles Township trails'],
     activities: [],
     description: 'A 3.5 mile paved trail',
-    documents: []
+    documents: [],
+    boundaryGeoJSON: 7
   },
   {
     id: 5,
@@ -103,7 +109,8 @@ export const parks: Park[] = [
     details: ['320 acres with trails along wetlands, woods and old-growth fields'],
     activities: [],
     description: 'A large park with many trails woods, fields, and wetlands',
-    documents: []
+    documents: [],
+    boundaryGeoJSON: 0
   },
   {
     id: 6,
@@ -117,7 +124,8 @@ export const parks: Park[] = [
     details: ['398 acres with wooded trails, ponds and St. Joseph River frontage'],
     activities: [],
     description: 'A large park along the St. Joseph River with trails and ponds',
-    documents: []
+    documents: [],
+    boundaryGeoJSON: 1
   },
 ];
 
@@ -606,21 +614,21 @@ export type ParkTrail = {
   accessibility: "Hiking Only" | "Accessible Boardwalk" | "Fully Accessible";
   notes: string;
   amenities: string;
-  geoJSON?: number;
+  geoJSON?: number | number[];
 }
 
 export const trails: ParkTrail[] = [
   // Bendix Woods (park: 0)
-  { id: 0,  park: 0, geoJSON: 6, activityType: 'hiking', name: "Big Tree Trail",                                         length: 0.5,  description: "A highlight of the park, featuring towering trees and interpretive signs on forest ecology.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "Short interpretive forest trail.", amenities: "Parking, Restrooms, Picnic Shelter, Playground" },
+  { id: 0,  park: 0, geoJSON: 6, activityType: 'hiking', name: "Big Tree Trail",                             length: 0.5,  description: "A highlight of the park, featuring towering trees and interpretive signs on forest ecology.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "Short interpretive forest trail.", amenities: "Parking, Restrooms, Picnic Shelter, Playground" },
   { id: 1,  park: 0, activityType: 'hiking', name: "Lower Big Tree Trail + Big Tree Trail combined",         length: 0.85, description: "Add another .35 miles to your 'show' by hiking the Lower Big Tree Trail, crossing a seasonal stream.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "Connects to Lower Big Tree Trail for extended route.", amenities: "" },
-  { id: 2,  park: 0, geoJSON: 1, activityType: 'hiking', name: "Lookout Trail",                                          length: 0.2,  description: "A short path leading to one of the park’s scenic overlooks — perfect for a quick nature walk.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 2,  park: 0, geoJSON: 1, activityType: 'hiking', name: "Lookout Trail",                              length: 0.2,  description: "A short path leading to one of the park’s scenic overlooks — perfect for a quick nature walk.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 3,  park: 0, activityType: 'hiking', name: "Wildlife Loop",                                          length: 0.5,  description: "Circles through wooded areas rich in birds and small mammals; great for casual hikers.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 4,  park: 0, geoJSON: 0, activityType: 'hiking', name: "Raccoon Run",                                            length: 0.6,  description: "Gently rolling terrain with woodland and wetland views — a peaceful mid-length hike.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 4,  park: 0, geoJSON: 0, activityType: 'hiking', name: "Raccoon Run",                                length: 0.6,  description: "Gently rolling terrain with woodland and wetland views — a peaceful mid-length hike.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 5,  park: 0, activityType: 'hiking', name: "Black Forest Trail",                                     length: 0.1,  description: "A shaded connector trail through dense woods.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 6,  park: 0, geoJSON: 5, activityType: 'hiking', name: "Lower Big Tree Trail",                                   length: 0.35, description: "Parallels the Big Tree Trail at lower elevation — ideal for combining into a loop.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 7,  park: 0, geoJSON: 4, activityType: 'hiking', name: "Hardwoods Loop",                                         length: 0.3,  description: "Stroll among mature hardwoods with seasonal wildflowers carpeting the forest floor.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 8,  park: 0, geoJSON: 7, activityType: 'hiking', name: "Whispering Woods Loop",                                  length: 0.2,  description: "A short loop ideal for families and beginner hikers.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy",    surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 9,  park: 0, geoJSON: 3, activityType: 'hiking', name: "Central Trail",                                          length: 0.53, description: "Connects the core picnic and shelter areas, making it an easy option for visitors exploring the park’s center.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 6,  park: 0, geoJSON: 5, activityType: 'hiking', name: "Lower Big Tree Trail",                       length: 0.35, description: "Parallels the Big Tree Trail at lower elevation — ideal for combining into a loop.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 7,  park: 0, geoJSON: 4, activityType: 'hiking', name: "Hardwoods Loop",                             length: 0.3,  description: "Stroll among mature hardwoods with seasonal wildflowers carpeting the forest floor.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 8,  park: 0, geoJSON: 7, activityType: 'hiking', name: "Whispering Woods Loop",                      length: 0.2,  description: "A short loop ideal for families and beginner hikers.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy",    surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 9,  park: 0, geoJSON: 3, activityType: 'hiking', name: "Central Trail",                              length: 0.53, description: "Connects the core picnic and shelter areas, making it an easy option for visitors exploring the park’s center.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
 
   // Ferrettie / Baugo Creek (park: 3)
   { id: 10, park: 3, activityType: 'hiking', name: "Portage Trail",                                          length: 1.1,  description: "Along the edge of Baugo Creek. May see Pileated Woodpecker, beaver activity, and spring yellow Trout Lily. The park’s longest trail, tracing the historic footpath once used by fur traders to connect waterways. Great for birdwatching.", mapUrl: "https://www.sjcparks.org/575/Ferrettie-Baugo-Creek", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "Trail follows creek with scenic footbridge crossings.", amenities: "Parking, Restrooms, Picnic Shelter, Playground" },
@@ -628,42 +636,42 @@ export const trails: ParkTrail[] = [
   { id: 12, park: 3, activityType: 'hiking', name: "Palisades Trail",                                        length: 0.8,  description: "A scenic loop that winds along the bluffs overlooking Baugo Creek. Offers beautiful creek views and varied terrain.", mapUrl: "https://www.sjcparks.org/575/Ferrettie-Baugo-Creek", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
 
   // Spicer Lake (park: 5)
-  { id: 13, park: 5, geoJSON: 8, activityType: 'hiking', name: "Boardwalk Trail",                                        length: 0.25, description: "Walk back in time through the swamp. Look for Red-Shouldered Hawks, Pileated Woodpeckers & warblers.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Easy", surface: "Boardwalk", accessibility: "Accessible Boardwalk", notes: "Takes visitors through a portion of the wetland.", amenities: "Parking, Restrooms, Nature Center, Observation Platform, Picnic Shelter" },
-  { id: 14, park: 5, geoJSON: 23, activityType: 'hiking', name: "Glacier Flats Trail",                                    length: 1.5,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 15, park: 5, geoJSON: 11, activityType: 'hiking', name: "Hawthorn Trail",                                         length: 0.3,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 16, park: 5, geoJSON: 19, activityType: 'hiking', name: "Maple Woods Trail",                                      length: 0.2,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 17, park: 5, geoJSON: 12, activityType: 'hiking', name: "Old Field Trail",                                        length: 0.3,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 18, park: 5, geoJSON: 16, activityType: 'hiking', name: "Sassafras Ridge Trail",                                  length: 0.2,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 19, park: 5, activityType: 'hiking', name: "Wetland-Woodland-Lancaster Trail Loop",                  length: 1.6,  description: "Longer hike featuring Mayapples, Large-Flowered Trillium, Jack-in-the-Pulpit & Spring Beauty.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 13, park: 5, geoJSON: 8, activityType: 'hiking', name: "Boardwalk Trail",                            length: 0.25, description: "Walk back in time through the swamp. Look for Red-Shouldered Hawks, Pileated Woodpeckers & warblers.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Easy", surface: "Boardwalk", accessibility: "Accessible Boardwalk", notes: "Takes visitors through a portion of the wetland.", amenities: "Parking, Restrooms, Nature Center, Observation Platform, Picnic Shelter" },
+  { id: 14, park: 5, geoJSON: 23, activityType: 'hiking', name: "Glacier Flats Trail",                       length: 1.5,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 15, park: 5, geoJSON: 11, activityType: 'hiking', name: "Hawthorn Trail",                            length: 0.3,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 16, park: 5, geoJSON: 19, activityType: 'hiking', name: "Maple Woods Trail",                         length: 0.2,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 17, park: 5, geoJSON: 12, activityType: 'hiking', name: "Old Field Trail",                           length: 0.3,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 18, park: 5, geoJSON: 16, activityType: 'hiking', name: "Sassafras Ridge Trail",                     length: 0.2,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 19, park: 5, geoJSON: [10, 14, 15, 17, 18, 20 ], activityType: 'hiking', name: "Wetland-Woodland-Lancaster Trail Loop",                  length: 1.6,  description: "Longer hike featuring Mayapples, Large-Flowered Trillium, Jack-in-the-Pulpit & Spring Beauty.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
 
   // St. Patrick's County Park (park: 6)
-  { id: 20, park: 6, activityType: 'hiking', name: "River Ridge Trail + Manion Cabin Loop",                  length: 1.5,  description: "Tranquil walk along the St. Joseph River. Extend to Manion Cabin Loop to see Eastern Bluebirds & Osprey.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "Riverside views; connects to other park trails.", amenities: "Parking, Restrooms, Picnic Shelter, Canoe Launch, Playground" },
-  { id: 21, park: 6, geoJSON: 41, activityType: 'hiking', name: "River Ridge Trail",                                      length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 22, park: 6, geoJSON: 40, activityType: 'hiking', name: "Horsetail Trace",                                        length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 20, park: 6, geoJSON: [41], activityType: 'hiking', name: "River Ridge Trail + Manion Cabin Loop",                  length: 1.5,  description: "Tranquil walk along the St. Joseph River. Extend to Manion Cabin Loop to see Eastern Bluebirds & Osprey.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "Riverside views; connects to other park trails.", amenities: "Parking, Restrooms, Picnic Shelter, Canoe Launch, Playground" },
+  { id: 21, park: 6, geoJSON: 41, activityType: 'hiking', name: "River Ridge Trail",                         length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 22, park: 6, geoJSON: 40, activityType: 'hiking', name: "Horsetail Trace",                           length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 23, park: 6, activityType: 'hiking', name: "Manion Canyon Loop",                                     length: 0.4,  description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 24, park: 6, activityType: 'hiking', name: "Pasture Loop",                                           length: 0.45, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 25, park: 6, geoJSON: 39, activityType: 'hiking', name: "Milkweed Loop",                                          length: 0.47, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 26, park: 6, geoJSON: 37, activityType: 'hiking', name: "Oak Tree Trail",                                         length: 0.56, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 27, park: 6, geoJSON: 38, activityType: 'hiking', name: "Cabin Walk",                                             length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 28, park: 6, geoJSON: 34, activityType: 'hiking', name: "White Pine Letters Trail",                               length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 29, park: 6, geoJSON: 36, activityType: 'hiking', name: "White Pine Extension",                                   length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 30, park: 6, geoJSON: 42, activityType: 'hiking', name: "Woodlot Loop",                                           length: 0.39, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 31, park: 6, geoJSON: 44, activityType: 'hiking', name: "Box Turtle Loop",                                        length: 0.37, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 32, park: 6, geoJSON: 43, activityType: 'hiking', name: "Sycamore Loop",                                          length: 0.32, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 33, park: 6, geoJSON: 32, activityType: 'hiking', name: "Deer Run Loop",                                          length: 0.67, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 34, park: 6, geoJSON: 33, activityType: 'hiking', name: "Aspen Loop",                                             length: 0.67, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 25, park: 6, geoJSON: 39, activityType: 'hiking', name: "Milkweed Loop",                             length: 0.47, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 26, park: 6, geoJSON: 37, activityType: 'hiking', name: "Oak Tree Trail",                            length: 0.56, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 27, park: 6, geoJSON: 38, activityType: 'hiking', name: "Cabin Walk",                                length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 28, park: 6, geoJSON: 34, activityType: 'hiking', name: "White Pine Letters Trail",                  length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 29, park: 6, geoJSON: 36, activityType: 'hiking', name: "White Pine Extension",                      length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 30, park: 6, geoJSON: 42, activityType: 'hiking', name: "Woodlot Loop",                              length: 0.39, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 31, park: 6, geoJSON: 44, activityType: 'hiking', name: "Box Turtle Loop",                           length: 0.37, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 32, park: 6, geoJSON: 43, activityType: 'hiking', name: "Sycamore Loop",                             length: 0.32, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 33, park: 6, geoJSON: 32, activityType: 'hiking', name: "Deer Run Loop",                             length: 0.67, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 34, park: 6, geoJSON: 33, activityType: 'hiking', name: "Aspen Loop",                                length: 0.67, description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 35, park: 6, activityType: 'hiking', name: "Auten Trail (Indiana-Michigan River Valley Trail)",      length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
 
   // LaSalle Trail (park: 4)
   { id: 36, park: 4, geoJSON: 30, activityType: 'hiking', name: "LaSalle Trail (segment of Indiana-Michigan River Valley Trail)", length: 3.5, description: "Starts in Roseland near Town Park, runs to Indiana/Michigan state line; former interurban corridor from 1903.", mapUrl: "https://www.sjcparks.org/581/LaSalle-Trail", difficulty: "Easy", surface: "Paved", accessibility: "Fully Accessible", notes: "Part of regional multi-use trail network. Access to 30 miles of bike-pedestrian trails.", amenities: "Parking, Restrooms, Bike Repair Station" },
 
   // Beverly D. Crone (park:)
-  { id: 37, park: 1, geoJSON: 25, activityType: 'hiking', name: "Trail 1", length: 1, description: "", mapUrl: "", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: ""},
-  { id: 38, park: 1, geoJSON: 26, activityType: 'hiking', name: "Trail 2", length: 1, description: "", mapUrl: "", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: ""},
-  { id: 39, park: 1, geoJSON: 27, activityType: 'hiking', name: "Trail 3", length: 1, description: "", mapUrl: "", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: ""},
+  { id: 37, park: 1, geoJSON: 25, activityType: 'hiking', name: "Trail 1",                                   length: 1, description: "", mapUrl: "", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: ""},
+  { id: 38, park: 1, geoJSON: 26, activityType: 'hiking', name: "Trail 2",                                   length: 1, description: "", mapUrl: "", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: ""},
+  { id: 39, park: 1, geoJSON: 27, activityType: 'hiking', name: "Trail 3",                                   length: 1, description: "", mapUrl: "", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: ""},
 
   // Chamberlain Lake
-  { id: 40, park: 2, geoJSON: 27, activityType: 'hiking', name: "Chamberlain Trail", length: 1, description: "", mapUrl: "", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: ""},
+  { id: 40, park: 2, geoJSON: 29, activityType: 'hiking', name: "Chamberlain Trail",                         length: 1, description: "", mapUrl: "", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: ""},
 ];
 
 export type GeoWithId = {

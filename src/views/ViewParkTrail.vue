@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import PageResponsive from '@/components/page/PageResponsive.vue'
+import ParksMap from '@/components/ParksMap.vue';
 import { appName, parks, trails, type Park, type ParkTrail } from '@/shared/constants'
 import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons'
 import { biTree } from '@quasar/extras/bootstrap-icons'
 import { evaPhoneCallOutline } from '@quasar/extras/eva-icons'
 import { useMeta } from 'quasar'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 useMeta({ title: `${appName} - Park Information` })
@@ -22,6 +23,10 @@ const trail = ref<ParkTrail | undefined>(
   )
 );
 
+onMounted(() => {
+  window.scrollTo({ top: 0, left: 0 })
+})
+
 </script>
 
 <template>
@@ -32,12 +37,13 @@ const trail = ref<ParkTrail | undefined>(
         <q-btn flat round :icon="backIcon" @click="$router.back()" />
         <h4 class="text-h6 hero-top-bar page-name">{{ 'Trail Information' }}</h4>
       </div>
-      <q-img
-        v-if="park?.image"
-        :src="park?.image"
+
+      <!-- Live Amazon Location Map -->
+      <ParksMap
+        :trail-id="trail?.id"
+        :bike-trail-id="-1"
+        :park-id="park?.id"
         class="hero-img"
-        fit="cover"
-        position="center center"
       />
     </div>
 

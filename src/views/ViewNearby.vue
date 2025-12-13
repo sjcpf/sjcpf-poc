@@ -7,7 +7,7 @@ import { ref } from 'vue';
 import { useGeolocation } from '@/utils/useGeolocation';
 import { headingDistanceTo } from 'geolocation-utils';
 import { useMeta } from 'quasar';
-import ParksMap from '@/components/ParksMap.vue'; // ✅ new import
+import ParksMap from '@/components/ParksMap.vue';
 
 useMeta({ title: `${appName} - Nearby Parks` })
 const { location } = useGeolocation();
@@ -48,7 +48,9 @@ function onDragStart(e: TouchEvent | MouseEvent) {
       </div>
 
       <!-- Live Amazon Location Map -->
-      <ParksMap class="hero-img" />
+      <ParksMap
+        class="hero-img"
+      />
     </div>
 
     <!-- Parks List Card (unchanged) -->
