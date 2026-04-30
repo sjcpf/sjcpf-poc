@@ -1,4 +1,4 @@
-import LayoutMenu from '@/layouts/LayoutMenu.vue'
+import LayoutApp from '@/layouts/LayoutApp.vue'
 import { RouteNameEnum } from '@/shared/enums'
 import ViewHome from '@/views/ViewHome.vue'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -10,7 +10,7 @@ const router = createRouter({
       path: '/',
       redirect: `/home`, // Your default route
       name: RouteNameEnum.MENU_LAYOUT,
-      component: LayoutMenu,
+      component: LayoutApp,
       children: [
         {
           path: '/home',
@@ -36,6 +36,16 @@ const router = createRouter({
           path: '/nearbyParks',
           name: RouteNameEnum.NEARBY,
           component: () => import('@/views/ViewNearby.vue')
+        },
+        {
+          path: '/seasons',
+          name: RouteNameEnum.SEASONS,
+          component: () => import('@/views/ViewSeasons.vue'),
+        },
+        {
+          path: '/seasons/:season',
+          name: RouteNameEnum.SEASON_ACTIVITIES,
+          component: () => import('@/views/ViewSeasonActivities.vue'),
         },
         {
           path: '/parks',
@@ -68,9 +78,24 @@ const router = createRouter({
           component: () => import('@/views/ViewActivity.vue'),
         },
         {
+          path: '/trails',
+          name: RouteNameEnum.TRAILS,
+          component: () => import('@/views/ViewAllTrails.vue'),
+        },
+        {
           path: '/about',
           name: RouteNameEnum.ABOUT,
           component: () => import('@/views/ViewAbout.vue'),
+        },
+        {
+          path: '/rules',
+          name: RouteNameEnum.RULES,
+          component: () => import('@/views/ViewRules.vue'),
+        },
+        {
+          path: '/policies',
+          name: RouteNameEnum.POLCIIES,
+          component: () => import('@/views/ViewPolicies.vue'),
         },
         {
           path: '/:pathMatch(.*)*', // 404 Not Found. Part of default route path.

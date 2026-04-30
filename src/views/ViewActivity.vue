@@ -1,17 +1,20 @@
 <script lang='ts' setup>
 import { useRoute, useRouter } from 'vue-router'
 import { computed, ref, watch } from 'vue'
+import InfoCard from '@/components/InfoCard.vue'
 import { activityTypes, activities, parks, trails } from '@/shared/constants'
-import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons';
-import PageResponsive from '@/components/page/PageResponsive.vue';
+import { backIcon, mapPinIcon } from '@/shared/icons'
+import PageResponsive from '@/components/page/PageResponsive.vue'
+import SocialShare from '@/components/SocialShare.vue'
+import { RouteNameEnum } from '@/shared/enums'
 
 const route = useRoute()
 const router = useRouter()
 
-const activityTypeKey = route.params.activity as string;
-const activityType = ref(activityTypes[activityTypeKey]);
+const activityTypeKey = route.params.activity as string
+const activityType = ref(activityTypes[activityTypeKey])
 
-type TrailData = { id: number, park: number; count: number; totalLength: number, activityType: string };
+type TrailData = { id: number, park: number; count: number; totalLength: number, activityType: string }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isTrailData(obj: any): obj is TrailData {
@@ -44,8 +47,7 @@ const filteredActivities = computed(() => {
       }, {});
     return Object.values(parkMap);
   }
-});
-
+})
 
 watch(
   () => filteredActivities.value,
@@ -80,12 +82,17 @@ const getPark = (parkId: number) => parks.find(p => p.id === parkId);
       />
     </div>
 
-    <!-- Info Card -->
-    <div class="info-card q-pa-lg">
-      <h3 class="text-h5 q-mb-sm info-card-header">{{ activityType?.label }}</h3>
+    <InfoCard :header="activityType?.label">
+      <RouterLink
+        v-if="activityTypeKey === 'hiking'"
+        :to="{ name: RouteNameEnum.TRAILS }"
+        class="all-trails-link"
+      >
+        Full Trail List
+      </RouterLink>
       <!-- List of Parks -->
-      <div class="q-pa-lg">
-        <h5 class="text-subtitle1 q-mb-sm">Found at:</h5>
+      <div class="q-pa-md">
+        <h5 class="text-subtitle1 q-my-none q-mb-sm">Available at:</h5>
         <div v-for="act in filteredActivities" :key="act.id" class="q-mb-sm">
           <q-icon :name="mapPinIcon" size="20px" class="q-mr-sm" />
           <RouterLink
@@ -98,20 +105,21 @@ const getPark = (parkId: number) => parks.find(p => p.id === parkId);
             <span v-if="isTrailData(act)">
               <span> ({{ act.count }}) ({{ act.totalLength.toFixed(2) }}mi)</span>
             </span>
+            <span v-if="!isTrailData(act)">
+              <span> {{ act.private ? '(Private)' : ''}}</span>
+            </span>
+            <span v-if="!isTrailData(act)">
+              <span> {{ act.night ? '(Nights)' : ''}}</span>
+            </span>
+            <span v-if="!isTrailData(act)">
+              <span> {{ act.evening ? '(Evenings)' : ''}}</span>
+            </span>
           </RouterLink>
         </div>
       </div>
+    </InfoCard>
 
-      <!-- Social Share -->
-      <div class="share-section q-pa-md text-center">
-        <h5 class="text-subtitle1 q-mb-sm">Share Your Experience</h5>
-        <div class="row justify-center q-gutter-md">
-          <q-btn color="primary" round icon="f"></q-btn>
-          <q-btn color="primary" round icon="i" />
-          <q-btn color="primary" round :icon="shareIcon" />
-        </div>
-      </div>
-    </div>
+    <SocialShare />
   </PageResponsive>
 </template>
 
@@ -129,35 +137,17 @@ const getPark = (parkId: number) => parks.find(p => p.id === parkId);
   height: 318px;
   opacity: 0.9;
 }
-.info-card {
-  background: #e0f7f7;
-  height: 100%;
-  border-top-left-radius: 45px;
-  border-top-right-radius: 45px;
-  transform: translateY(-60px);
+.all-trails-link {
+  display: inline-block;
+  font-size: 0.75rem;
+  text-decoration: underline;
+  color: inherit;
+  margin-bottom: 12px;
 }
-.info-card-header {
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-  text-transform: capitalize;
+.all-trails-link:hover {
+  opacity: 0.8;
 }
 .contact {
   margin-left: 25px;
-}
-.share-section {
-  background: white;
-  bottom: 0;
-  width: 100vw;
-  flex-direction: column;
-  position: fixed;
-  height: 515px/2;
-  left: 50%;
-  transform: translateX(-50%);
-  border-top-left-radius: 100% 100px;
-  border-top-right-radius: 100% 100px;
-  justify-content: center;
-  align-items: center;
 }
 </style>

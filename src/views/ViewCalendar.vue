@@ -1,11 +1,11 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
 import PageResponsive from '@/components/page/PageResponsive.vue'
-import { appName, parks } from '@/shared/constants'
+import { appName, calendarFeedUrl, parks } from '@/shared/constants'
 import { backIcon, mapPinIcon, scheduleTimeIcon } from '@/shared/icons'
 import { useMeta } from 'quasar'
-import { ref, computed, onMounted } from 'vue'
-import { events } from '@/shared/constants'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import ical from 'cal-parser'
 import type { Page } from 'v-calendar/dist/types/src/utils/page.js'
 import type { CalendarEvent } from '@/shared/constants'
 import type { CalendarComponent } from 'v-calendar/dist/types/tests/unit/specs/utils.js'
@@ -15,99 +15,173 @@ const calendar = ref<CalendarComponent>(null)
 const selectedDate = ref<Date | null>(null)
 const visibleMonth = ref(new Date().getMonth())
 const visibleYear = ref(new Date().getFullYear())
-
-onMounted(() => {
-  if (calendar.value) {
-    calendar.value.move(new Date())
-  }
-})
+const events = ref<CalendarEvent[]>([])
+const isLoadingEvents = ref(false)
+const eventLoadError = ref<string | null>(null)
 
 interface VCalendarDay {
-  date: Date       // JS Date object
-  weekday: number  // 0 = Sunday, 6 = Saturday
+  date: Date
+  weekday: number
+}
+
+function normalizeIcalForCalParser(ics: string): string {
+  return ics
+    .replace(/\r\n/g, '\n')
+    .replace(/\n[ \t]/g, '')
+    .replace(
+      /^(DTSTART|DTEND|DTSTAMP|LAST-MODIFIED);TZID=[^:]+:(\d{8})T(\d{2})(\d{2})(\d{2})$/gm,
+      '$1:$2T$3$4$5Z'
+    )
+}
+
+function getIcalValue(value: any): any {
+  return value?.value ?? value ?? ''
+}
+
+function normalizeText(value: string): string {
+  return value.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim()
+}
+
+function matchParkId(text: string): number | null {
+  const normalized = normalizeText(text)
+
+  const directMatch = parks.find(park =>
+    normalized.includes(normalizeText(park.name))
+    || normalized.includes(normalizeText(park.address))
+  )
+
+  if (directMatch) return directMatch.id
+
+  if (normalized.includes('bendix')) return 0
+  if (normalized.includes('crone')) return 1
+  if (normalized.includes('chamberlain')) return 2
+  if (normalized.includes('ferrettie') || normalized.includes('baugo')) return 3
+  if (normalized.includes('lasalle')) return 4
+  if (normalized.includes('spicer')) return 5
+  if (normalized.includes('patrick')) return 6
+
+  return null
+}
+
+function mapIcalEvent(event: any, index: number): CalendarEvent {
+  const title = String(getIcalValue(event.summary))
+  const location = String(getIcalValue(event.location))
+  const description = String(getIcalValue(event.description))
+  const startValue = getIcalValue(event.dtstart)
+  const endValue = getIcalValue(event.dtend) || startValue
+  const start = new Date(startValue)
+  const end = new Date(endValue)
+
+  return {
+    id: String(getIcalValue(event.uid) || `${title}-${index}`),
+    start: start.toISOString(),
+    end: end.toISOString(),
+    title,
+    park: matchParkId(`${title} ${location} ${description}`),
+    location,
+    description,
+  }
+}
+
+async function loadEvents() {
+  isLoadingEvents.value = true
+  eventLoadError.value = null
+
+  try {
+    const response = await fetch(calendarFeedUrl, {
+      method: 'GET',
+      mode: 'cors',
+    })
+
+    if (!response.ok) {
+      throw new Error(`Calendar feed failed: ${response.status}`)
+    }
+
+    const rawIcs = await response.text()
+    const normalizedIcs = normalizeIcalForCalParser(rawIcs)
+
+    const parsed = ical.parseString(normalizedIcs)
+
+    events.value = parsed.events
+      .map(mapIcalEvent)
+      .filter(
+        event =>
+          event.title &&
+          event.start &&
+          !Number.isNaN(new Date(event.start).getTime())
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.start).getTime() -
+          new Date(b.start).getTime()
+      )
+  } catch (error) {
+    console.error('Calendar load failed:', error)
+    eventLoadError.value = 'Unable to load calendar events.'
+    events.value = []
+  } finally {
+    isLoadingEvents.value = false
+  }
 }
 
 function onDayClick(day: VCalendarDay) {
-  // 'day.date' is a JS Date object
   selectedDate.value = day.date
-  console.log('User selected date:', selectedDate.value)
-  console.log(eventsForSelected)
 }
 
 function handleClickOutside(event: MouseEvent) {
   const target = event.target as HTMLElement
-  // if clicked element does NOT have class 'vc-day-content'
+
   if (!target.classList.contains('vc-day-content')) {
-    console.log('User clicked OFF of dates');
     selectedDate.value = null
   }
 }
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
-})
-
-/*function onMonthChanged({ month, year }) {
-  visibleMonth.value = month;
-  visibleYear.value = year;
-}*/
-
 function onPagesUpdate(pages: Page[] | any[]) {
   if (!pages || !pages.length) return
 
-  // Use the first page (left-most / only pane)
   const first = pages[0]
 
-  // Page.month is 1-based (Jan=1). Convert to 0-based JS month.
   visibleMonth.value = (first.month ?? (first as any).month) - 1
   visibleYear.value = first.year ?? (first as any).year
-
-  // debug - inspect the page object so you can confirm structure
-  console.log('v-calendar pages update:', pages)
-  console.log('visibleMonth (0-based):', visibleMonth.value, 'visibleYear:', visibleYear.value)
 }
 
 const eventsForSelected = computed(() => {
-  if (!selectedDate.value) return null // no day selected
-  const dayEvents = events.filter(
-    e => new Date(e.start).toDateString() === selectedDate.value!.toDateString()
+  if (!selectedDate.value) return null
+
+  return events.value.filter(
+    event => new Date(event.start).toDateString() === selectedDate.value!.toDateString()
   )
-  return dayEvents // empty array if no events, array if events exist
 })
 
 const eventsForMonth = computed(() =>
-  events.filter(e => {
-    const d = new Date(e.start)
-    return d.getMonth() === visibleMonth.value && d.getFullYear() === visibleYear.value
+  events.value.filter(event => {
+    const date = new Date(event.start)
+    return date.getMonth() === visibleMonth.value && date.getFullYear() === visibleYear.value
   })
 )
 
 const displayedEvents = computed(() => {
   if (selectedDate.value === null) {
-    // no day selected → show all events for the month
     return eventsForMonth.value
   }
 
-  // day is selected
   if (eventsForSelected.value && eventsForSelected.value.length > 0) {
     return eventsForSelected.value
   }
 
-  // day selected but no events
   return []
 })
 
-function toLocalDateOnly(d: string | Date) {
-  const x = new Date(d)
-  return new Date(x.getFullYear(), x.getMonth(), x.getDate()) // local midnight
+function toLocalDateOnly(date: string | Date) {
+  const parsed = new Date(date)
+  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate())
 }
 
-function buildDatesArray(events: CalendarEvent[]) {
-  return events.flatMap(ev => {
-    const start = toLocalDateOnly(ev.start)
-    const end = ev.end ? toLocalDateOnly(ev.end) : start
+function buildDatesArray(calendarEvents: CalendarEvent[]) {
+  return calendarEvents.flatMap(event => {
+    const start = toLocalDateOnly(event.start)
+    const end = event.end ? toLocalDateOnly(event.end) : start
 
-    // same day -> single Date
     if (start.getTime() === end.getTime()) {
       return [start]
     }
@@ -116,24 +190,39 @@ function buildDatesArray(events: CalendarEvent[]) {
   })
 }
 
-const datesForAttributes = buildDatesArray(events)
+const datesForAttributes = computed(() => buildDatesArray(events.value))
 
-const attributes = [
+const attributes = computed(() => [
   {
     key: 'events',
     highlight: 'teal',
-    dates: datesForAttributes,
+    dates: datesForAttributes.value,
   },
-]
+])
 
 function formatAMPM(date: Date): string {
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12 || 12; // converts 0 → 12
-  const minutesStr = minutes.toString().padStart(2, '0'); // keep leading zero for minutes
-  return `${hours}:${minutesStr} ${ampm}`;
+  let hours = date.getHours()
+  const minutes = date.getMinutes()
+  const ampm = hours >= 12 ? 'PM' : 'AM'
+
+  hours = hours % 12 || 12
+
+  const minutesStr = minutes.toString().padStart(2, '0')
+  return `${hours}:${minutesStr} ${ampm}`
 }
+
+onMounted(async () => {
+  if (calendar.value) {
+    calendar.value.move(new Date())
+  }
+
+  document.addEventListener('click', handleClickOutside)
+  await loadEvents()
+})
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
 
 useMeta({ title: `${appName} - Events` })
 </script>
@@ -146,6 +235,7 @@ useMeta({ title: `${appName} - Events` })
         <q-btn flat round :icon="backIcon" @click="$router.back()" />
         <h4 class="text-h6 hero-top-bar page-name">Calendar Of Events</h4>
       </div>
+
       <!-- Calendar Area -->
       <div ref="calendarWrapper" class="calendar-month w-full">
         <v-calendar
@@ -165,16 +255,29 @@ useMeta({ title: `${appName} - Events` })
           </template>
         </v-calendar>
       </div>
+
       <!-- Events List -->
       <div class="q-ma-lg">
+        <div v-if="isLoadingEvents" class="q-mt-md text-center">
+          Loading events...
+        </div>
+
+        <div v-else-if="eventLoadError" class="q-mt-md text-center text-negative">
+          {{ eventLoadError }}
+        </div>
+
+        <div v-else-if="displayedEvents.length === 0" class="q-mt-md text-center">
+          No events found.
+        </div>
+
         <div
           v-for="event in displayedEvents"
+          v-else
           :key="event.id"
           class="event-list-item q-mt-md q-pa-md bg-primary text-white rounded-borders row items-center"
         >
           <!-- Left column: Date -->
           <div class="col-3 flex flex-center">
-            <!-- Start Day -->
             <div class="column items-center">
               <div class="event-day-text event-font">
                 {{ new Date(event.start).toLocaleDateString('en-US', { weekday: 'short' }) }}
@@ -184,7 +287,6 @@ useMeta({ title: `${appName} - Events` })
               </div>
             </div>
 
-            <!-- Dash + End Day (only if different date) -->
             <template v-if="new Date(event.end).toDateString() !== new Date(event.start).toDateString()">
               <span class="mx-1 date-dash">-</span>
               <div class="column items-center">
@@ -201,24 +303,32 @@ useMeta({ title: `${appName} - Events` })
           <!-- Right column: Event details -->
           <div class="col-9 column">
             <div class="event-title event-font">{{ event.title }}</div>
-              <div class="event-details event-subtext event-font">
-                <q-icon :name="scheduleTimeIcon"/>
-                {{ formatAMPM(new Date(event.start)) }} -
-                {{ formatAMPM(new Date(event.end)) }}
-              </div>
-              <div class="event-details event-subtext event-font">
-                <q-icon :name="mapPinIcon"/>
-                <RouterLink
-                  :to="`/parks/${event.park}`"
-                  class="event-font park-link"
-                >
-                  {{ parks.find(park => park.id === event.park)?.name }}
-                </RouterLink>
-              </div>
+
+            <div class="event-details event-subtext event-font">
+              <q-icon :name="scheduleTimeIcon" />
+              {{ formatAMPM(new Date(event.start)) }} -
+              {{ formatAMPM(new Date(event.end)) }}
+            </div>
+
+            <div class="event-details event-subtext event-font">
+              <q-icon :name="mapPinIcon" />
+
+              <RouterLink
+                v-if="event.park !== null"
+                :to="`/parks/${event.park}`"
+                class="event-font park-link"
+              >
+                {{ parks.find(park => park.id === event.park)?.name }}
+              </RouterLink>
+
+              <span v-else>
+                {{ event.location || 'Location TBD' }}
+              </span>
             </div>
           </div>
         </div>
       </div>
+    </div>
   </PageResponsive>
 </template>
 

@@ -288,8 +288,10 @@ type ActivityDate =
   | DateSet;
 type SingleTime = string;
 type TimeRange = { start: string; end: string};
+type TimeSet = string[];
 type DayTimes =
   | SingleTime
+  | TimeSet
   | TimeRange;
 type Weekday =
   | "Daily"
@@ -311,26 +313,38 @@ type ActivityTime =
   | DayTimeBlock
   | DayTimeBlock[];
 
+export const seasons: {
+  id: number;
+  name: string;
+  img: string;
+}[] = [
+  { id: 0, name: 'Spring', img: '/images/seasons/spring.png' },
+  { id: 1, name: 'Summer', img: '/images/seasons/summer.png' },
+  { id: 2, name: 'Fall', img: '/images/seasons/fall.png' },
+  { id: 3, name: 'Winter', img: '/images/seasons/winter.png' }
+]
+
 export type ActivityType = {
   label: string;
+  seasons?: number[];
   img: string;
 }
 
 export const activityTypes: Record<string, ActivityType> = {
-  biking: { label: 'Bike Trails', img: '/images/bike.png' },
-  canoeing: { label: 'Canoeing', img: '/images/canoe.png' },
-  kayaking: { label: 'Kayaking', img: ''},
-  paddleBoard: { label: 'Stand-up Paddleboarding', img: ''},
-  discGolf: { label: 'Disc Golf', img: '/images/disc.png' },
-  geocaching: { label: 'Geocaching', img: '/images/geo.png' },
-  hiking: { label: 'Hiking Trails', img: '/images/hike.png' },
-  orienteering: { label: 'Orienteering', img: '/images/orient.png' },
-  running: { label: 'Running Wild', img: '/images/run.png' },
-  ski: { label: 'Skiing', img: ''},
-  snowShoe: { label: 'Snowshoe Rental', img: '' },
-  tubing: { label: 'Tubing', img: '' },
-  hayride: { label: 'Hayrides', img: ''},
-  playground: { label: 'Playground', img: '/images/play.png' }
+  biking: { label: 'Bike Trails', img: '/images/activities/bike.png' },
+  canoeing: { label: 'Canoeing', seasons: [0, 1, 2], img: '/images/activities/canoe.png' },
+  kayaking: { label: 'Kayaking', seasons: [0, 1, 2], img: '/images/activities/kayak.png'},
+  paddleBoard: { label: 'Stand-up Paddleboarding', seasons: [0, 1, 2], img: '/images/activities/paddleboard.png'},
+  discGolf: { label: 'Disc Golf', img: '/images/activities/disc.png' },
+  geocaching: { label: 'Geocaching', img: '/images/activities/geo.png' },
+  hiking: { label: 'Hiking Trails', img: '/images/activities/hike.png' },
+  orienteering: { label: 'Orienteering', img: '/images/activities/orient.png' },
+  running: { label: 'Running Wild', seasons: [1], img: '/images/activities/run.png' },
+  ski: { label: 'Skiing', seasons: [3], img: '/images/activities/ski.png'},
+  snowShoe: { label: 'Snowshoe Rental', seasons: [3], img: '/images/activities/snowshoes.png' },
+  tubing: { label: 'Tubing', seasons: [3], img: '/images/activities/tubing.png' },
+  hayride: { label: 'Hayrides', seasons: [2], img: '/images/activities/hayride.png'},
+  playground: { label: 'Playground', img: '/images/activities/play.png' }
 }
 
 // Location or phone being set overrides the default park phone and location that would be inherited from the park instance the event is at
@@ -338,10 +352,14 @@ export type Activity = {
   id: number;
   park: number;
   activityType: string;
+  labelOverride?: string;
   details: string[];
   description: string;
+  private?: boolean;
   dates?: ActivityDate[];
   times?: ActivityTime;
+  evening?: boolean;
+  night?: boolean;
   img?: string;
   phone?: string;
   documents?: { label: string; url: string }[];
@@ -353,6 +371,7 @@ export const activities: Activity[] = [
     id: 0,
     park: 6,
     activityType: 'ski',
+    // seasons: [3],
     dates: [{ start: 'December 26', end: 'March 9' }],
     times: [{ days: ['Wednesday', 'Sunday'], times: { start: '10:00', end: '16:00' } }],
     details: [
@@ -362,7 +381,7 @@ export const activities: Activity[] = [
       'Gate fee in effect during winter programs and special events.',
       '$10 ski rental available, includes skis, boots, and poles. Boots sizes range from 11 youth to 15 men. Parental signature is required for renters aged 16 and under.'
     ],
-    description: 'St. Patrick’s County Park takes on a special beauty during winter. Enjoy the winter scenery while skiing over 6 miles of trails.',
+    description: 'St. Patrick\'s County Park takes on a special beauty during winter. Enjoy the winter scenery while skiing over 6 miles of trails.',
     documents: [
       { label: 'Winter Trail Map', url: 'https://www.sjcparks.org/DocumentCenter/View/3465/St-Patricks-Park---Winter-Map-PDF' },
       { label: 'Winter Sports', url: 'https://www.sjcparks.org/DocumentCenter/View/3464/Winter-Leisure-Activities-Brochure-PDF' }
@@ -374,6 +393,7 @@ export const activities: Activity[] = [
     id: 1,
     park: 6,
     activityType: 'snowShoe',
+    // seasons: [3],
     dates: [{ start: 'December 26', end: 'March 9' }],
     times: [{ days: ['Wednesday', 'Sunday'], times: { start: '10:00', end: '16:00' } }],
     details: [
@@ -381,26 +401,27 @@ export const activities: Activity[] = [
       '$10 rental includes snowshoes and poles.',
       'Gate fee in effect during winter programs and special events.'
     ],
-    description: 'Explore St. Patrick’s County Park in the quiet beauty of freshly fallen snow.',
+    description: 'Explore St. Patrick\'s County Park in the quiet beauty of freshly fallen snow.',
     documents: [
       { label: 'Winter Trail Map', url: 'https://www.sjcparks.org/DocumentCenter/View/3465/St-Patricks-Park---Winter-Map-PDF' },
       { label: 'Winter Sports', url: 'https://www.sjcparks.org/DocumentCenter/View/3464/Winter-Leisure-Activities-Brochure-PDF' }
     ]
   },
 
-  // 2–3: Tubing - St. Patrick's County Park & Ferrettie-Baugo Creek County Park
+  // 2–5: Tubing - St. Patrick's County Park & Ferrettie-Baugo Creek County Park
   {
     id: 2,
     park: 6,
     activityType: 'tubing',
-    dates: [{ start: 'December 26', end: 'March 9' }],
+    // seasons: [3],
+    dates: [{ start: 'December 26', end: 'January 5' }],
     times: [{ day: 'Saturday', times: { start: '12:00', end: '16:00' } }, { day: 'Sunday', times: { start: '12:00', end: '16:00' } }],
     details: [
       '$15 per hour per tube',
       'Helmet required for ages under 12',
       'Open when snow cover is sufficient for tubing'
     ],
-    description: 'Tubing hills with groomed snow cover and lift service at St. Patrick’s County Park.',
+    description: 'Tubing hills with groomed snow cover and lift service at St. Patrick\'s County Park.',
     documents: [
       { label: 'Tubing Rules', url: 'https://www.sjcparks.org/DocumentCenter/View/3462/Innertubing-Hill-Rules-PDF'},
       { label: 'Winter Sports', url: 'https://www.sjcparks.org/DocumentCenter/View/3464/Winter-Leisure-Activities-Brochure-PDF' }
@@ -408,9 +429,30 @@ export const activities: Activity[] = [
   },
   {
     id: 3,
+    park: 6,
+    activityType: 'tubing',
+    private: true,
+    // seasons: [3],
+    dates: [{ start: 'December 26', end: 'January 5' }],
+    times: [{ day: 'Friday', times: { start: '17:00', end: '20:00' } }],
+    details: [
+      'Private party for groups up to 20',
+      '$200 per hour, reservation required',
+      'Includes tubes and basic supervision'
+    ],
+    description: 'Reserve a private tubing party for your family or friends at St. Patrick\'s County Park.',
+    documents: [
+      { label: 'Tubing Reservation packet', url: 'https://www.sjcparks.org/DocumentCenter/View/3463/Innertubing-Reservation-Packet-PDF'},
+      { label: 'Tubing Rules', url: 'https://www.sjcparks.org/DocumentCenter/View/3462/Innertubing-Hill-Rules-PDF'},
+      { label: 'Winter Sports', url: 'https://www.sjcparks.org/DocumentCenter/View/3464/Winter-Leisure-Activities-Brochure-PDF' }
+    ]
+  },
+  {
+    id: 4,
     park: 3,
     activityType: 'tubing',
-    dates: [{ start: 'December 26', end: 'March 9' }],
+    // seasons: [3],
+    dates: [{ start: 'December 26', end: 'January 5' }],
     times: [{ day: 'Saturday', times: { start: '12:00', end: '16:00' } }, { day: 'Sunday', times: { start: '12:00', end: '16:00' } }],
     details: [
       '$15 per hour per tube',
@@ -423,31 +465,13 @@ export const activities: Activity[] = [
       { label: 'Winter Sports', url: 'https://www.sjcparks.org/DocumentCenter/View/3464/Winter-Leisure-Activities-Brochure-PDF' }
     ]
   },
-
-  // 4–5: Private Tubing Parties - St. Patrick's & Ferrettie-Baugo
-  {
-    id: 4,
-    park: 6,
-    activityType: 'tubing',
-    dates: [{ start: 'December 26', end: 'March 9' }],
-    times: [{ day: 'Friday', times: { start: '17:00', end: '20:00' } }],
-    details: [
-      'Private party for groups up to 20',
-      '$200 per hour, reservation required',
-      'Includes tubes and basic supervision'
-    ],
-    description: 'Reserve a private tubing party for your family or friends at St. Patrick’s County Park.',
-    documents: [
-      { label: 'Tubing Reservation packet', url: 'https://www.sjcparks.org/DocumentCenter/View/3463/Innertubing-Reservation-Packet-PDF'},
-      { label: 'Tubing Rules', url: 'https://www.sjcparks.org/DocumentCenter/View/3462/Innertubing-Hill-Rules-PDF'},
-      { label: 'Winter Sports', url: 'https://www.sjcparks.org/DocumentCenter/View/3464/Winter-Leisure-Activities-Brochure-PDF' }
-    ]
-  },
   {
     id: 5,
     park: 3,
     activityType: 'tubing',
-    dates: [{ start: 'December 26', end: 'March 9' }],
+    private: true,
+    // seasons: [3],
+    dates: [{ start: 'December 26', end: 'January 5' }],
     times: [{ day: 'Friday', times: { start: '17:00', end: '20:00' } }],
     details: [
       'Private party for groups up to 20',
@@ -467,14 +491,16 @@ export const activities: Activity[] = [
     id: 6,
     park: 6,
     activityType: 'ski',
-    dates: [{ start: 'December 26', end: 'March 9' }],
+    // seasons: [3],
+    dates: ["January 10, 2026", "January 24, 2026"],
     times: [{ days: ['Friday', 'Saturday'], times: { start: '17:00', end: '20:00' } }],
+    night: true,
     details: [
       'Night skiing available when snow conditions allow',
       'Trail fees apply same as daytime',
       'Lighting covers main trails only'
     ],
-    description: 'Enjoy skiing under the lights at St. Patrick’s County Park.',
+    description: 'Enjoy skiing under the lights at St. Patrick\'s County Park.',
     documents: [{ label: 'Winter Sports', url: 'https://www.sjcparks.org/DocumentCenter/View/3464/Winter-Leisure-Activities-Brochure-PDF' }]
   },
 
@@ -483,7 +509,8 @@ export const activities: Activity[] = [
     id: 7,
     park: 6,
     activityType: 'canoeing',
-    dates: [{ start: 'May 1', end: 'October 31' }],
+    // seasons: [0, 1, 2],
+    dates: [{ start: 'May 23', end: 'October 5' }],
     times: [{ days: ['Friday', 'Sunday'], times: { start: '16:00', end: '20:00' } }],
     details: [
       '$10 per hour rental',
@@ -501,7 +528,8 @@ export const activities: Activity[] = [
     id: 8,
     park: 3,
     activityType: 'canoeing',
-    dates: [{ start: 'May 1', end: 'October 31' }],
+    // seasons: [0, 1, 2],
+    dates: [{ start: 'September 18', end: 'October 2' }],
     times: [{ days: ['Friday', 'Sunday'], times: { start: '16:00', end: '20:00' } }],
     details: [
       '$10 per hour rental',
@@ -593,20 +621,22 @@ export const activities: Activity[] = [
     documents: []
   },
 
-  // 15–16: Hayrides - Bendix Woods
+  // 15–17: Hayrides - Bendix Woods
   {
     id: 15,
     park: 0,
     activityType: 'hayride',
-    dates: [{ start: 'October 1', end: 'November 30' }],
-    times: [{ days: ['Friday', 'Sunday'], times: { start: '18:00', end: '21:00' } }],
+    private: true,
+    //seasons: [2],
+    dates: [{ start: 'September 24', end: 'October 31' }],
+    times: [{ days: ['Wednesday', 'Thursday', 'Friday'], times: ['09:00', '09:30', '10:00', '10:30', '11:00'] }],
     details: [
       'PRIVATE',
       '$8 per person',
       'Children under 3 ride free',
       'Reservations recommended for groups of 10+'
     ],
-    description: 'Evening hayrides through the scenic fall trails of St. Patrick’s County Park.',
+    description: 'Morning hayrides through the scenic fall trails of St. Patrick\'s County Park.',
     documents: [
       { label: 'Hayride Reservation Packet', url: 'https://www.sjcparks.org/DocumentCenter/View/3461/2024-Hayride-Reservation-Packet-PDF'}
     ]
@@ -615,8 +645,30 @@ export const activities: Activity[] = [
     id: 16,
     park: 0,
     activityType: 'hayride',
+    private: true,
+    //seasons: [2],
+    dates: [{ start: 'September 19', end: 'November 1' }],
+    times: [{ day: 'Wednesday', times: ['13:00', '15:30', '18:00', '20:30'] }],
+    evening: true,
+    details: [
+      'PRIVATE',
+      '$8 per person',
+      'Children under 3 ride free',
+      'Reservations recommended for groups of 10+'
+    ],
+    description: 'Evening hayrides through the scenic fall trails of St. Patrick\'s County Park.',
+    documents: [
+      { label: 'Hayride Reservation Packet', url: 'https://www.sjcparks.org/DocumentCenter/View/3461/2024-Hayride-Reservation-Packet-PDF'}
+    ]
+  },
+  {
+    id: 17,
+    park: 0,
+    activityType: 'hayride',
+    // seasons: [2],
     dates: [{ start: 'October 1', end: 'November 30' }],
     times: [{ days: ['Friday', 'Sunday'], times: { start: '18:00', end: '21:00' } }],
+    evening: true,
     details: [
       'PUBLIC',
       '$8 per person',
@@ -627,12 +679,11 @@ export const activities: Activity[] = [
     documents: []
   },
 
-  // 17–18: Mountain Biking - St. Patrick's & Ferrettie-Baugo
+  // 18–19: Mountain Biking - St. Patrick's & Ferrettie-Baugo
   {
-    id: 17,
+    id: 18,
     park: 0,
     activityType: 'biking',
-    dates: ['Daily'],
     times: [{ day: 'Daily', times: { start: 'Sunrise', end: 'Sunset' } }],
     details: [
       'Trails rated from beginner to advanced',
@@ -657,7 +708,7 @@ export const activities: Activity[] = [
       'Bring a compass or use smartphone app',
       'Suitable for all ages'
     ],
-    description: 'Test your navigation skills along marked courses throughout St. Patrick’s County Park.',
+    description: 'Test your navigation skills along marked courses throughout St. Patrick\'s County Park.',
     documents: []
   },
   {
@@ -680,17 +731,25 @@ export const activities: Activity[] = [
     id: 21,
     park: 6,
     activityType: 'running',
-    dates: [{ start: 'April 1', end: 'September 30' }],
+    labelOverride: '5K Run & 3K Scavenger Hunt Walk',
+    // seasons: [1],
+    dates: ['August 15'],
     times: [{ day: 'Saturday', times: { start: '09:00', end: '11:00' } }],
     details: [
-      'Next run: Saturday, August 15, 2026',
-      'Outdoor activity program for children ages 6-12',
-      'Registration required',
+      '5K Run & 3K Scavenger Hunt Walk',
+      'The Running Wild 5K Run is professionally chip-timed with disposable chips, taking participants along wooded and open field trails, park roads, grass, and gravel. ',
+      'Awards are given to the top 3 finishers in each age category',
       'Parental consent forms required',
+      'The 3K Wacky Scavenger Hunt Walk follows similar, relatively flat surfaces. Dogs are welcome on a 6-ft. leash, but only for the walk; individuals or families with leashed dogs will start at the back of the walk.',
+      'Registered participants enjoy an egg bake breakfast with fresh fruit and our famous homemade granola cookies.',
+      'Fantastic door prizes are donated by local vendors, the St. Joseph County Parks Foundation, and Friends of Bendix Woods and Spicer Lake (must be present to win).',
+      'Each participant receives a hand-crafted medallion featuring the animal of the year (one per registered participant, while supplies last).'
     ],
-    description: 'Kids explore nature and learn outdoor skills in a fun, structured program at St. Patrick’s County Park.',
+    description: '5K Runs and Wacky Scavenger Hunt Walks at St. Patrick\'s County Park.',
     documents: [
-      { label: 'Course Map', url: 'https://www.sjcparks.org/DocumentCenter/View/9151/Course-Map-PDF'}
+      { label: 'Course Map', url: 'https://www.sjcparks.org/DocumentCenter/View/9151/Course-Map-PDF'},
+      { label: 'Registration Form', url: 'https://docaccess.com/docviewer.html?url=https%3A%2F%2Fwww.sjcindiana.gov%2FDocumentCenter%2FView%2F9154&url_hash=e2b1ef0bf41b77a3f889572feca429fa03c26ab38156bf99876dade4e27a95b3&domain=sjcindiana.gov'},
+      { label: 'Corporate Sponsorship Form', url: 'https://docaccess.com/docviewer.html?url=https%3A%2F%2Fsjcindiana.gov%2FDocumentCenter%2FView%2F70407&url_hash=5f1223bd30df1d9581c9f0d3387f57542e44e7fa2b675f86dc80776143bb07a0&domain=sjcindiana.gov'},
     ]
   },
 
@@ -706,7 +765,7 @@ export const activities: Activity[] = [
       'Supervision recommended for young children',
       'Equipment inspected regularly'
     ],
-    description: 'Modern playground equipment with safety surfacing at St. Patrick’s County Park.',
+    description: 'Modern playground equipment with safety surfacing at St. Patrick\'s County Park.',
     documents: []
   },
   {
@@ -720,7 +779,7 @@ export const activities: Activity[] = [
       'Supervision recommended for young children',
       'Equipment inspected regularly'
     ],
-    description: 'Modern playground equipment with safety surfacing at St. Patrick’s County Park.',
+    description: 'Modern playground equipment with safety surfacing at St. Patrick\'s County Park.',
     documents: []
   },
   {
@@ -736,7 +795,135 @@ export const activities: Activity[] = [
     ],
     description: 'Modern playground equipment with safety surfacing at Ferrettie-Baugo Creek County Park.',
     documents: []
-  }
+  },
+
+  // Kayaking
+  {
+    id: 25,
+    park: 6,
+    activityType: 'kayaking',
+    description:
+      "Kayak on the scenic St. Joseph River! Friday trips run exclusively from Keller Park to St. Patrick's County Park. All rentals require a $50 refundable deposit. The deposit will be refunded upon return of equipment in good condition.",
+    details: [
+      'Single kayak capacity is 250 lbs; double is 450 lbs.',
+      'Long trip rental ends at 2pm.',
+      'Rental package includes vessels, paddles, required life jackets and shuttle service.',
+      'Not recommended for children under 3 years; life jackets that small are not available.',
+      'Alcohol, smoking, and vaping are prohibited in shuttle vans and vessels.',
+      'No pets allowed.',
+      'Short Trip: Single Kayak $30; Double Kayak $40.',
+      'Long Trip: Single Kayak $40; Double Kayak $50.',
+      'Gate fee in effect weekends & holidays, Apr-Oct, and Fridays from Memorial Day to Labor Day, as well as during winter programs and special events.',
+      'Late return fee $15/30min.'
+    ],
+    dates: [
+      {
+        start: 'May 23',
+        end: 'October 4',
+      },
+    ],
+    times: {
+      days: ['Friday', 'Sunday'],
+      times: {
+        start: '11am',
+        end: '4pm',
+      },
+    },
+    phone: '574-277-4828 and 574-674-9765',
+    documents: [
+      {
+        label: 'Trip Map',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/62579/STP-Canoe-Trip-Map',
+      },
+      {
+        label: 'Canoe/Kayak Brochure',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/62581/2025-Canoe-Kayak-Brochure',
+      },
+    ],
+  },
+  {
+    id: 26,
+    park: 3,
+    activityType: 'kayaking',
+    description:
+      "Paddle on Baugo Creek! All rentals require a $50 refundable deposit. The deposit will be refunded upon return of equipment in good condition.",
+    details: [
+      'Single kayak capacity is 250 lbs; double is 450 lbs.',
+      'Rental package includes vessels, paddles, required life jackets and shuttle service.',
+      'Not recommended for children under 3 years; life jackets that small are not available.',
+      'Alcohol, smoking, and vaping are prohibited in shuttle vans and vessels.',
+      'No pets allowed.',
+      'Short Trip: Single Kayak $30; Double Kayak $40.',
+      'Gate fee in effect weekends & holidays, Apr-Oct, and Fridays from Memorial Day to Labor Day, as well as during winter programs and special events.',
+      'Late return fee $15/30min.'
+    ],
+    dates: [
+      {
+        start: 'May 22',
+        end: 'October 2',
+      },
+    ],
+    times: {
+      days: ['Friday', 'Sunday'],
+      times: {
+        start: '11am',
+        end: '4pm',
+      },
+    },
+    phone: '574-277-4828 and 574-674-9765',
+    documents: [
+      {
+        label: 'Trip Map',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/62579/STP-Canoe-Trip-Map',
+      },
+      {
+        label: 'Canoe/Kayak Brochure',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/62581/2025-Canoe-Kayak-Brochure',
+      },
+    ],
+  },
+
+  // Paddleboarding
+  {
+    id: 27,
+    park: 6,
+    activityType: 'paddleBoard',
+    description:
+      "Paddle on the scenic St. Joseph River! Friday trips run exclusively from Keller Park to St. Patrick's County Park. All rentals require a $50 refundable deposit. The deposit will be refunded upon return of equipment in good condition.",
+    details: [
+      'Rental package includes vessels, paddles, required life jackets and shuttle service.',
+      'Not recommended for children under 3 years; life jackets that small are not available.',
+      'Alcohol, smoking, and vaping are prohibited in shuttle vans and vessels.',
+      'No pets allowed.',
+      'Stand-up Paddleboard $30; SHORT TRIP ONLY',
+      'Gate fee in effect weekends & holidays, Apr-Oct, and Fridays from Memorial Day to Labor Day, as well as during winter programs and special events.',
+      'Late return fee $15/30min.'
+    ],
+    dates: [
+      {
+        start: 'May 23',
+        end: 'October 4',
+      },
+    ],
+    times: {
+      days: ['Saturday', 'Sunday'],
+      times: {
+        start: '11am',
+        end: '4pm',
+      },
+    },
+    phone: '574-277-4828 and 574-674-9765',
+    documents: [
+      {
+        label: 'Trip Map',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/62579/STP-Canoe-Trip-Map',
+      },
+      {
+        label: 'Canoe/Kayak Brochure',
+        url: 'https://www.sjcparks.org/DocumentCenter/View/62581/2025-Canoe-Kayak-Brochure',
+      },
+    ],
+  },
 ];
 
 export type ParkTrail = {
@@ -759,19 +946,19 @@ export const trails: ParkTrail[] = [
   // Bendix Woods (park: 0)
   { id: 0,  park: 0, geoJSON: 6, activityType: 'hiking', name: "Big Tree Trail",                             length: 0.5,  description: "A highlight of the park, featuring towering trees and interpretive signs on forest ecology.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "Short interpretive forest trail.", amenities: "Parking, Restrooms, Picnic Shelter, Playground" },
   { id: 1,  park: 0, geoJSON: [5, 6], activityType: 'hiking', name: "Lower Big Tree Trail + Big Tree Trail combined",         length: 0.85, description: "Add another .35 miles to your 'show' by hiking the Lower Big Tree Trail, crossing a seasonal stream.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "Connects to Lower Big Tree Trail for extended route.", amenities: "" },
-  { id: 2,  park: 0, geoJSON: 1, activityType: 'hiking', name: "Lookout Trail",                              length: 0.2,  description: "A short path leading to one of the park’s scenic overlooks — perfect for a quick nature walk.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 2,  park: 0, geoJSON: 1, activityType: 'hiking', name: "Lookout Trail",                              length: 0.2,  description: "A short path leading to one of the park\'s scenic overlooks — perfect for a quick nature walk.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 3,  park: 0, activityType: 'hiking', name: "Wildlife Loop",                                          length: 0.5,  description: "Circles through wooded areas rich in birds and small mammals; great for casual hikers.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 4,  park: 0, geoJSON: 0, activityType: 'hiking', name: "Raccoon Run",                                length: 0.6,  description: "Gently rolling terrain with woodland and wetland views — a peaceful mid-length hike.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 5,  park: 0, activityType: 'hiking', name: "Black Forest Trail",                                     length: 0.1,  description: "A shaded connector trail through dense woods.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 6,  park: 0, geoJSON: 5, activityType: 'hiking', name: "Lower Big Tree Trail",                       length: 0.35, description: "Parallels the Big Tree Trail at lower elevation — ideal for combining into a loop.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 7,  park: 0, geoJSON: 4, activityType: 'hiking', name: "Hardwoods Loop",                             length: 0.3,  description: "Stroll among mature hardwoods with seasonal wildflowers carpeting the forest floor.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 8,  park: 0, geoJSON: 7, activityType: 'hiking', name: "Whispering Woods Loop",                      length: 0.2,  description: "A short loop ideal for families and beginner hikers.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy",    surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 9,  park: 0, geoJSON: 3, activityType: 'hiking', name: "Central Trail",                              length: 0.53, description: "Connects the core picnic and shelter areas, making it an easy option for visitors exploring the park’s center.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 9,  park: 0, geoJSON: 3, activityType: 'hiking', name: "Central Trail",                              length: 0.53, description: "Connects the core picnic and shelter areas, making it an easy option for visitors exploring the park\'s center.", mapUrl: "https://www.sjcparks.org/572/Bendix-Woods", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
 
   // Ferrettie / Baugo Creek (park: 3)
-  { id: 10, park: 3, activityType: 'hiking', name: "Portage Trail",                                          length: 1.1,  description: "Along the edge of Baugo Creek. May see Pileated Woodpecker, beaver activity, and spring yellow Trout Lily. The park’s longest trail, tracing the historic footpath once used by fur traders to connect waterways. Great for birdwatching.", mapUrl: "https://www.sjcparks.org/575/Ferrettie-Baugo-Creek", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "Trail follows creek with scenic footbridge crossings.", amenities: "Parking, Restrooms, Picnic Shelter, Playground" },
-  { id: 11, park: 3, activityType: 'hiking', name: "Portage Loop",                                           length: 0.1,  description: "A short connector loop branching from the main Portage Trail — perfect for a brief stroll or to extend your route.", mapUrl: "https://www.sjcparks.org/575/Ferrettie-Baugo-Creek", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 12, park: 3, activityType: 'hiking', name: "Palisades Trail",                                        length: 0.8,  description: "A scenic loop that winds along the bluffs overlooking Baugo Creek. Offers beautiful creek views and varied terrain.", mapUrl: "https://www.sjcparks.org/575/Ferrettie-Baugo-Creek", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 10, park: 3, geoJSON: 47, activityType: 'hiking', name: "Portage Trail",                             length: 1.1,  description: "Along the edge of Baugo Creek. May see Pileated Woodpecker, beaver activity, and spring yellow Trout Lily. The park\'s longest trail, tracing the historic footpath once used by fur traders to connect waterways. Great for birdwatching.", mapUrl: "https://www.sjcparks.org/575/Ferrettie-Baugo-Creek", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "Trail follows creek with scenic footbridge crossings.", amenities: "Parking, Restrooms, Picnic Shelter, Playground" },
+  { id: 11, park: 3, geoJSON: 48, activityType: 'hiking', name: "Portage Loop",                              length: 0.1,  description: "A short connector loop branching from the main Portage Trail — perfect for a brief stroll or to extend your route.", mapUrl: "https://www.sjcparks.org/575/Ferrettie-Baugo-Creek", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 12, park: 3, geoJSON: 49, activityType: 'hiking', name: "Palisades Trail",                           length: 0.8,  description: "A scenic loop that winds along the bluffs overlooking Baugo Creek. Offers beautiful creek views and varied terrain.", mapUrl: "https://www.sjcparks.org/575/Ferrettie-Baugo-Creek", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
 
   // Spicer Lake (park: 5)
   { id: 13, park: 5, geoJSON: 8, activityType: 'hiking', name: "Boardwalk Trail",                            length: 0.25, description: "Walk back in time through the swamp. Look for Red-Shouldered Hawks, Pileated Woodpeckers & warblers.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Easy", surface: "Boardwalk", accessibility: "Accessible Boardwalk", notes: "Takes visitors through a portion of the wetland.", amenities: "Parking, Restrooms, Nature Center, Observation Platform, Picnic Shelter" },
@@ -780,10 +967,10 @@ export const trails: ParkTrail[] = [
   { id: 16, park: 5, geoJSON: 19, activityType: 'hiking', name: "Maple Woods Trail",                         length: 0.2,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 17, park: 5, geoJSON: 12, activityType: 'hiking', name: "Old Field Trail",                           length: 0.3,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 18, park: 5, geoJSON: 16, activityType: 'hiking', name: "Sassafras Ridge Trail",                     length: 0.2,  description: "", mapUrl: "https://www.sjcparks.org/591/Spicer-Lake-Nature-Preserve", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
-  { id: 19, park: 5, geoJSON: [10, 14, 15, 17, 18, 20 ], activityType: 'hiking', name: "Wetland-Woodland-Lancaster Trail Loop",                  length: 1.6,  description: "Longer hike featuring Mayapples, Large-Flowered Trillium, Jack-in-the-Pulpit & Spring Beauty.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
+  { id: 19, park: 5, geoJSON: [10, 14, 15, 17, 18, 20 ], activityType: 'hiking', name: "Wetland-Woodland-Lancaster Trail Loop", length: 1.6,  description: "Longer hike featuring Mayapples, Large-Flowered Trillium, Jack-in-the-Pulpit & Spring Beauty.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Moderate", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
 
   // St. Patrick's County Park (park: 6)
-  { id: 20, park: 6, geoJSON: [41], activityType: 'hiking', name: "River Ridge Trail + Manion Cabin Loop",                  length: 1.5,  description: "Tranquil walk along the St. Joseph River. Extend to Manion Cabin Loop to see Eastern Bluebirds & Osprey.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "Riverside views; connects to other park trails.", amenities: "Parking, Restrooms, Picnic Shelter, Canoe Launch, Playground" },
+  { id: 20, park: 6, geoJSON: [41], activityType: 'hiking', name: "River Ridge Trail + Manion Cabin Loop",   length: 1.5,  description: "Tranquil walk along the St. Joseph River. Extend to Manion Cabin Loop to see Eastern Bluebirds & Osprey.", mapUrl: "https://www.sjcparks.org/1142/Featured-Trails", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "Riverside views; connects to other park trails.", amenities: "Parking, Restrooms, Picnic Shelter, Canoe Launch, Playground" },
   { id: 21, park: 6, geoJSON: 41, activityType: 'hiking', name: "River Ridge Trail",                         length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 22, park: 6, geoJSON: 40, activityType: 'hiking', name: "Horsetail Trace",                           length: 0,    description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
   { id: 23, park: 6, activityType: 'hiking', name: "Manion Canyon Loop",                                     length: 0.4,  description: "", mapUrl: "https://www.sjcparks.org/592/St-Patricks-County-Park", difficulty: "Easy", surface: "Natural", accessibility: "Hiking Only", notes: "", amenities: "" },
@@ -876,6 +1063,11 @@ export const trailData: GeoWithId[] = [
   { id: 44, geoJSON: { type: "Feature", properties: { Trail_Name: "Box Turtle Loop" }, geometry: { type: "MultiLineString", coordinates: [ [ [ -86.2624206, 41.7576037 ], [ -86.2623222, 41.7576191 ], [ -86.2621157, 41.7576338 ], [ -86.2620002, 41.757623 ], [ -86.2619179, 41.757603 ], [ -86.2618423, 41.7576288 ] ], [ [ -86.2618423, 41.7576288 ], [ -86.2617332, 41.757708 ], [ -86.261663, 41.7578549 ], [ -86.261622, 41.7580623 ], [ -86.2616276, 41.7581516 ], [ -86.2615428, 41.75827 ], [ -86.2615289, 41.7583165 ], [ -86.2615151, 41.7583773 ], [ -86.2615747, 41.7586307 ], [ -86.2616386, 41.7588341 ], [ -86.2616513, 41.7591771 ], [ -86.2616587, 41.7594522 ], [ -86.2616358, 41.7595595 ], [ -86.2615188, 41.7598138 ], [ -86.2614763, 41.7598569 ], [ -86.2613809, 41.7598681 ], [ -86.2612615, 41.759858 ], [ -86.2611085, 41.7598267 ], [ -86.260965, 41.7597917 ], [ -86.2608788, 41.7597599 ], [ -86.260864, 41.7597064 ], [ -86.260858, 41.7595707 ], [ -86.2608603, 41.7593027 ], [ -86.2608621, 41.758981 ], [ -86.2608481, 41.7584951 ], [ -86.260835, 41.7581164 ], [ -86.260835, 41.7581164 ], [ -86.2618423, 41.7576288 ] ] ] } } },
   { id: 45, geoJSON: { type: "Feature", properties: { Trail_Name: "River Ramble" }, geometry: { type: "MultiLineString", coordinates: [ [ [ -86.2704207, 41.7579092 ], [ -86.2705118, 41.7579516 ], [ -86.2706311, 41.7580092 ], [ -86.2706135, 41.7581119 ], [ -86.2706385, 41.7582333 ], [ -86.2707552, 41.7582987 ], [ -86.270774, 41.7584255 ], [ -86.2708421, 41.7585681 ], [ -86.2708861, 41.7586822 ], [ -86.2708966, 41.7587786 ], [ -86.2709454, 41.7588999 ], [ -86.2709462, 41.7589785 ], [ -86.2709517, 41.7590606 ], [ -86.2709666, 41.7591249 ], [ -86.2710151, 41.7591997 ], [ -86.2710971, 41.7592993 ], [ -86.2711886, 41.7593881 ], [ -86.2712324, 41.7594772 ], [ -86.2712669, 41.7595914 ], [ -86.2713063, 41.7597163 ], [ -86.2713499, 41.7597946 ], [ -86.2713499, 41.7597947 ] ], [ [ -86.2711784, 41.7518508 ], [ -86.2713113, 41.7520234 ], [ -86.2713412, 41.752159 ], [ -86.2713183, 41.7522699 ], [ -86.2713914, 41.7524232 ], [ -86.2714458, 41.7526338 ], [ -86.2714246, 41.7528274 ], [ -86.2713824, 41.7529944 ], [ -86.2713957, 41.7531402 ], [ -86.2713764, 41.7532029 ], [ -86.2713049, 41.7532062 ], [ -86.2712411, 41.7531887 ], [ -86.2711776, 41.7532039 ], [ -86.2711382, 41.7532488 ], [ -86.2711429, 41.7533202 ], [ -86.2711912, 41.7533795 ], [ -86.2712436, 41.7534626 ], [ -86.2712168, 41.75357 ], [ -86.2712295, 41.7536503 ], [ -86.2712022, 41.753707 ], [ -86.2711913, 41.7538203 ], [ -86.2712086, 41.753972 ], [ -86.2711893, 41.7540347 ], [ -86.2711662, 41.7541063 ], [ -86.2711308, 41.7541571 ], [ -86.2711353, 41.7542077 ], [ -86.2711001, 41.7542734 ] ], [ [ -86.2708319, 41.7544266 ], [ -86.2708891, 41.754412 ], [ -86.27097, 41.7543902 ], [ -86.2710316, 41.754347 ], [ -86.2711001, 41.7542734 ] ], [ [ -86.2704798, 41.7565761 ], [ -86.2705123, 41.7564794 ], [ -86.2705264, 41.7564543 ] ], [ [ -86.2703986, 41.7570732 ], [ -86.2704209, 41.7569051 ], [ -86.2704575, 41.7567334 ], [ -86.2704798, 41.7565761 ], [ -86.2705563, 41.7565864 ], [ -86.2705942, 41.756554 ], [ -86.2706322, 41.756536 ], [ -86.2706933, 41.7565053 ], [ -86.2707154, 41.7564431 ], [ -86.2707514, 41.7563667 ], [ -86.2707158, 41.7562961 ], [ -86.2707101, 41.7561925 ], [ -86.2706947, 41.7560818 ], [ -86.2707324, 41.7560316 ], [ -86.2708083, 41.755974 ], [ -86.2708171, 41.7559025 ], [ -86.270821, 41.7558024 ], [ -86.2708058, 41.7557167 ], [ -86.2708286, 41.7556023 ], [ -86.270842, 41.7554986 ], [ -86.2708554, 41.755402 ], [ -86.2708974, 41.7553018 ], [ -86.270892, 41.7552339 ], [ -86.2708814, 41.7551232 ], [ -86.2708755, 41.7549981 ], [ -86.2708554, 41.7548946 ], [ -86.2708829, 41.7547694 ], [ -86.2708676, 41.7546659 ], [ -86.2708572, 41.754573 ], [ -86.2708234, 41.7545339 ], [ -86.2708319, 41.7544266 ] ], [ [ -86.2704207, 41.7579092 ], [ -86.2703986, 41.7570732 ] ] ] } } },
   { id: 46, geoJSON: { type: "Feature", properties: { Trail_Name: "Bridge - Orchard Trail" }, geometry: { type: "MultiLineString", coordinates: [ [ [ -86.2663721, 41.7546501 ], [ -86.2663729, 41.7547287 ], [ -86.2663786, 41.7548323 ], [ -86.2663841, 41.7549109 ], [ -86.2663655, 41.754961 ], [ -86.2663137, 41.7550435 ], [ -86.2662524, 41.7551188 ], [ -86.2662337, 41.7551582 ], [ -86.26622, 41.7552262 ], [ -86.2662443, 41.7552725 ], [ -86.2659574, 41.7551138 ], [ -86.2659444, 41.7540632 ], [ -86.2663703, 41.7540036 ] ], [ [ -86.2663494, 41.7532917 ], [ -86.2662524, 41.7533058 ], [ -86.2660984, 41.7534008 ], [ -86.2659729, 41.7535356 ], [ -86.265914, 41.7536576 ], [ -86.2658911, 41.7537852 ], [ -86.2658873, 41.7539072 ], [ -86.2658911, 41.7540037 ], [ -86.2659444, 41.7540632 ] ] ] } } },
+
+  // Ferretie/Baugo Creek
+  { id: 47, geoJSON: { type: "Feature", properties: { Trail_Name: "Portage Trail" }, geometry: { type: "MultiLineString", coordinates: [ [ [ -86.06546598, 41.66471022 ], [ -86.06534848, 41.66465397 ], [ -86.06526676, 41.66458125 ], [ -86.06517436, 41.66451898 ], [ -86.06508442, 41.66445047 ], [ -86.0649848, 41.66438875 ], [ -86.06489776, 41.66431692 ], [ -86.06483904, 41.66421904 ], [ -86.0647707, 41.66414417 ], [ -86.06472752, 41.66404653 ], [ -86.06469092, 41.66394901 ], [ -86.06465868, 41.66385668 ], [ -86.06467246, 41.66375496 ], [ -86.06459757, 41.66365736 ], [ -86.06458596, 41.66356591 ], [ -86.06452939, 41.66348346 ], [ -86.06455288, 41.66339198 ], [ -86.064672, 41.66340363 ], [ -86.06453193, 41.66332569 ], [ -86.06444525, 41.66325102 ], [ -86.06436902, 41.66317871 ], [ -86.06430084, 41.66310203 ], [ -86.06421311, 41.6630329 ], [ -86.06415584, 41.66293883 ], [ -86.06410311, 41.66285679 ], [ -86.06402823, 41.6627762 ], [ -86.06392416, 41.66270889 ], [ -86.06385446, 41.66262292 ], [ -86.06381981, 41.66251634 ], [ -86.06376624, 41.66243216 ], [ -86.063657392103707, 41.662357750217836 ] ], [ [ -86.063735144176349, 41.660615642785601 ], [ -86.06385372, 41.66051462 ], [ -86.0639833, 41.66050437 ], [ -86.06407501, 41.66057362 ], [ -86.06417168, 41.66064229 ], [ -86.06425995, 41.66071279 ], [ -86.06433572, 41.66078588 ], [ -86.06438866, 41.66086738 ], [ -86.06447601, 41.66093991 ], [ -86.06459419, 41.66097805 ], [ -86.06472166, 41.66095084 ], [ -86.06483231, 41.66088678 ], [ -86.06493997, 41.66083418 ], [ -86.06504681, 41.66078165 ], [ -86.06510545, 41.66069761 ], [ -86.06500417, 41.66064166 ], [ -86.06487205, 41.66063676 ], [ -86.064707438353807, 41.660515271658454 ] ], [ [ -86.064707436326131, 41.660515274735069 ], [ -86.06471084, 41.66037607 ], [ -86.06469269, 41.66027803 ], [ -86.06467332, 41.66018531 ], [ -86.06465222, 41.66008504 ], [ -86.06460805, 41.65999787 ], [ -86.06455063, 41.65991146 ], [ -86.06449794, 41.65982011 ], [ -86.0644507, 41.65973487 ], [ -86.06439192, 41.65965057 ], [ -86.0643477, 41.6595609 ], [ -86.06426698, 41.65948567 ], [ -86.06414826, 41.65945686 ], [ -86.06403324, 41.65941239 ], [ -86.06398621, 41.65932051 ], [ -86.06387823, 41.65926931 ], [ -86.06377438, 41.65921262 ], [ -86.06371576, 41.65912749 ], [ -86.06363623, 41.65905914 ], [ -86.06352968, 41.65899372 ], [ -86.06344627, 41.65892639 ], [ -86.06333456, 41.65896327 ], [ -86.06320169, 41.65896053 ], [ -86.06307348, 41.65896204 ], [ -86.06294585, 41.65898007 ], [ -86.06282103, 41.65898853 ], [ -86.06268977, 41.65899313 ], [ -86.0625734, 41.65902799 ], [ -86.06243905, 41.65902701 ], [ -86.06232117, 41.6590065 ], [ -86.06220865, 41.65897373 ], [ -86.0621087, 41.65892381 ], [ -86.06198892, 41.65888491 ], [ -86.06192819, 41.65879456 ], [ -86.06190641, 41.65869367 ], [ -86.06195984, 41.65861151 ], [ -86.06205071, 41.65854691 ], [ -86.06215516, 41.65849637 ], [ -86.06228372, 41.65847502 ], [ -86.06242325, 41.65846639 ], [ -86.06254692, 41.65843449 ], [ -86.06266557, 41.65840108 ], [ -86.06278486, 41.6583844 ], [ -86.06274983, 41.65829746 ], [ -86.062771008562763, 41.658121754655845 ] ], [ [ -86.063297106351001, 41.661504380148806 ], [ -86.06330509, 41.66140992 ], [ -86.06332822, 41.66130928 ], [ -86.06329978, 41.66121823 ], [ -86.06335536, 41.66113787 ], [ -86.06339554, 41.66105159 ], [ -86.06347331, 41.6609822 ], [ -86.06352747, 41.66090047 ], [ -86.06356009, 41.66080893 ], [ -86.06362224, 41.66072232 ], [ -86.063734450183347, 41.660614613806779 ] ], [ [ -86.063657392111537, 41.662357751493339 ], [ -86.063646177414086, 41.662268365872855 ], [ -86.063607, 41.66210969 ], [ -86.06353476, 41.66203523 ], [ -86.06341083, 41.66200622 ], [ -86.06329454, 41.66196393 ], [ -86.06317781, 41.66192423 ], [ -86.06312533, 41.66183293 ], [ -86.06317868, 41.66174998 ], [ -86.06328013, 41.66169288 ], [ -86.063297106352692, 41.661504380152529 ] ], [ [ -86.063446208521725, 41.658926396314939 ], [ -86.06335119, 41.65882938 ], [ -86.06325894, 41.65876592 ], [ -86.0631652, 41.65870177 ], [ -86.06307116, 41.65863819 ], [ -86.0629793, 41.65856733 ], [ -86.06289397, 41.65849202 ], [ -86.062784917844965, 41.658384397716127 ] ], [ [ -86.06277114, 41.65812055 ], [ -86.0628134, 41.65803004 ], [ -86.06289825, 41.65795366 ], [ -86.0629881, 41.65788741 ], [ -86.06310339, 41.65784994 ], [ -86.06318993, 41.65778471 ], [ -86.06326106, 41.65770333 ], [ -86.06332093, 41.65762136 ], [ -86.0632937, 41.65752414 ], [ -86.06328224, 41.65742257 ], [ -86.06324602, 41.65732731 ], [ -86.06321343, 41.65723291 ], [ -86.06316204, 41.65714279 ], [ -86.06311928, 41.65704842 ], [ -86.06309919, 41.65695313 ], [ -86.06310901, 41.65685536 ], [ -86.06302456, 41.65678177 ], [ -86.06292857, 41.65671115 ], [ -86.06287994, 41.65661848 ], [ -86.06284253, 41.65652064 ], [ -86.0627951, 41.65643065 ], [ -86.06272817, 41.65634702 ], [ -86.0626546, 41.65627343 ], [ -86.06257592, 41.65619559 ], [ -86.06251992, 41.65610907 ], [ -86.062473836770366, 41.655981719350017 ] ], [ [ -86.062473833364265, 41.655981719361741 ], [ -86.06233349, 41.6559002 ], [ -86.06221803, 41.65585447 ], [ -86.06213238, 41.6557843 ], [ -86.06205357, 41.65570777 ], [ -86.06194608, 41.65565265 ], [ -86.06185025, 41.65559259 ], [ -86.06178745, 41.65550863 ], [ -86.06177059, 41.65541687 ], [ -86.06176149, 41.65531695 ], [ -86.06173437, 41.65521477 ] ] ] }}},
+  { id: 48, geoJSON: { type: "Feature", properties: { Trail_Name: "Portage Loop" }, geometry: { type: "MultiLineString", coordinates: [ [ [ -86.061734370002497, 41.65521476999885 ], [ -86.061665822278201, 41.655144799256206 ], [ -86.06161268, 41.65506202 ], [ -86.06155137, 41.65498325 ], [ -86.06145129, 41.65491417 ], [ -86.06135338, 41.65485732 ], [ -86.06130544, 41.65476825 ], [ -86.06135432, 41.65467674 ], [ -86.06146639, 41.65464412 ], [ -86.06158742, 41.65464352 ], [ -86.06170198, 41.65469425 ], [ -86.06180251, 41.65477941 ], [ -86.06186029, 41.65486503 ], [ -86.06193486, 41.65494535 ], [ -86.06196494, 41.65504303 ], [ -86.06191791, 41.65514165 ], [ -86.061734370034301, 41.65521477021494 ] ] ] }}},
+  { id: 49, geoJSON: { type: "Feature", properties: { Trail_Name: "Palisades Trail" }, geometry: { type: "MultiLineString", coordinates: [ [ [ -86.065436769943844, 41.660702486549638 ], [ -86.065436826426861, 41.660702515908611 ] ], [ [ -86.064535872777398, 41.658838876638853 ], [ -86.06455701, 41.65880572 ], [ -86.06468593, 41.65877041 ], [ -86.06481175, 41.65877267 ], [ -86.06495027, 41.65877717 ], [ -86.06506859, 41.65879277 ], [ -86.06514823, 41.65886528 ], [ -86.06517512, 41.65895678 ], [ -86.06518318, 41.65905798 ], [ -86.06519777, 41.65915293 ], [ -86.065203, 41.65924329 ], [ -86.06519949, 41.6593465 ], [ -86.06520872, 41.65943849 ], [ -86.06534286, 41.65943919 ], [ -86.06547157, 41.65944174 ], [ -86.06560581, 41.65943495 ], [ -86.06573412, 41.65943985 ], [ -86.06585907, 41.65944041 ], [ -86.06598457, 41.65943714 ], [ -86.06609477, 41.65948472 ], [ -86.06610701, 41.65957609 ], [ -86.06609444, 41.65967302 ], [ -86.06608521, 41.6597703 ], [ -86.06607345, 41.65987235 ], [ -86.06607965, 41.65997215 ], [ -86.06605378, 41.66006439 ], [ -86.06605432, 41.66015516 ], [ -86.06605544, 41.66024995 ], [ -86.06606158, 41.66034957 ], [ -86.06605333, 41.66044665 ], [ -86.06605016, 41.66053812 ], [ -86.0661288, 41.66061998 ], [ -86.06625288, 41.66061225 ], [ -86.06637819, 41.66061297 ], [ -86.06648133, 41.66067636 ], [ -86.06650179, 41.66077223 ], [ -86.06650314, 41.66087107 ], [ -86.06650255, 41.66096808 ], [ -86.06650419, 41.66107048 ], [ -86.0665036, 41.66116849 ], [ -86.06649939, 41.66126783 ], [ -86.06650873, 41.6613651 ], [ -86.06650561, 41.66146283 ], [ -86.06649996, 41.66155287 ], [ -86.06648624, 41.66164714 ], [ -86.06649298, 41.66173845 ], [ -86.06641989, 41.66181377 ], [ -86.06630085, 41.66184052 ], [ -86.06628126, 41.66192961 ], [ -86.06627737, 41.66202555 ], [ -86.06623448, 41.6621229 ], [ -86.0661148, 41.66214091 ], [ -86.06605927, 41.66205835 ], [ -86.06605135, 41.66196375 ], [ -86.06604091, 41.66186542 ], [ -86.066006, 41.66176919 ], [ -86.06595833, 41.66168466 ], [ -86.0658697, 41.66159307 ], [ -86.0657707, 41.66154189 ], [ -86.06570819, 41.6614649 ], [ -86.06566793, 41.66137656 ], [ -86.06565503, 41.66128128 ], [ -86.06560231, 41.66119502 ], [ -86.06553082, 41.66111878 ], [ -86.06545965, 41.6610417 ], [ -86.06547402, 41.66095052 ], [ -86.06548165, 41.6608534 ], [ -86.06546259, 41.66076194 ], [ -86.065436769943844, 41.660702486549638 ] ], [ [ -86.065436769943844, 41.660702486549638 ], [ -86.06542462, 41.66067451 ], [ -86.06543245, 41.6605815 ], [ -86.065425100050206, 41.66052375790634 ] ], [ [ -86.065105488804377, 41.660697574030387 ], [ -86.06531538, 41.66063939 ], [ -86.065436769943844, 41.660702486549638 ] ], [ [ -86.065425100050206, 41.66052375790634 ], [ -86.065425150222438, 41.660523725232999 ] ], [ [ -86.065105456570492, 41.660697574142176 ], [ -86.06529551, 41.66060815 ], [ -86.065425100050206, 41.66052375790634 ] ], [ [ -86.065425100050206, 41.66052375790634 ], [ -86.06541987, 41.66048267 ], [ -86.0654304, 41.66038991 ], [ -86.06544346, 41.66029166 ], [ -86.06544449, 41.66019964 ], [ -86.0654747, 41.66010301 ], [ -86.06542528, 41.66001942 ], [ -86.0653141, 41.65995616 ], [ -86.06517679, 41.65997217 ], [ -86.06504979, 41.65994857 ], [ -86.06494782, 41.65989913 ], [ -86.06488417, 41.65981578 ], [ -86.06479848, 41.65973593 ], [ -86.06467801, 41.65964718 ], [ -86.06454852, 41.65961323 ], [ -86.064386310286721, 41.659639558152612 ] ], [ [ -86.063532277459203, 41.658995211858702 ], [ -86.06365827, 41.65895809 ], [ -86.06382279, 41.65897162 ], [ -86.06394258, 41.65900524 ], [ -86.06406162, 41.65902687 ], [ -86.06420094, 41.65903739 ], [ -86.06431895, 41.65901317 ], [ -86.06443295, 41.65897377 ], [ -86.06449815, 41.65889805 ], [ -86.064535872777398, 41.658838876638853 ] ], [ [ -86.064535872777398, 41.658838876638853 ], [ -86.06452361, 41.65887489 ], [ -86.06449382, 41.65896352 ], [ -86.06436744, 41.65903142 ], [ -86.06426459, 41.65908358 ], [ -86.06418926, 41.6591585 ], [ -86.06410304, 41.65923164 ], [ -86.063986223759827, 41.659320522265709 ] ], [ [ -86.063918258236725, 41.657251562327623 ], [ -86.06406622, 41.65732594 ], [ -86.06416184, 41.6573914 ], [ -86.06428004, 41.65748054 ], [ -86.06439185, 41.65751478 ], [ -86.06449567, 41.65756345 ], [ -86.06463401, 41.65754933 ], [ -86.06461179, 41.65764388 ], [ -86.06456399, 41.65772776 ], [ -86.06455688, 41.65782791 ], [ -86.06454623, 41.65792632 ], [ -86.06453364, 41.65802175 ], [ -86.06452158, 41.65812361 ], [ -86.06452928, 41.65821613 ], [ -86.06452123, 41.65831336 ], [ -86.06452721, 41.65840408 ], [ -86.06453372, 41.65849983 ], [ -86.06454026, 41.65859297 ], [ -86.06453858, 41.65868838 ], [ -86.06455589, 41.65878009 ], [ -86.064535872777398, 41.658838876638853 ] ], [ [ -86.064221288276315, 41.659126644144806 ], [ -86.06418036054238, 41.659035847007296 ] ], [ [ -86.063208738245976, 41.65722446439031 ], [ -86.06336153, 41.65721522 ], [ -86.06348339, 41.65719087 ], [ -86.06362251, 41.65719391 ], [ -86.0637586, 41.65721775 ], [ -86.063917720937809, 41.657251430073728 ] ] ] }}},
 ]
 
 export const bikeTrailData: GeoWithId[] = [
@@ -892,40 +1084,14 @@ export const parkBoundaryData: GeoWithId[] = [
   { id: 7, geoJSON: { type: "Feature", properties: { "NAME": "LaSalle Trail" }, geometry: { type: "MultiPolygon", "coordinates": [ [ [ [ -86.2523355, 41.7123686 ], [ -86.2523361, 41.7124083 ], [ -86.2523575, 41.7139622 ], [ -86.2523816, 41.7149391 ], [ -86.2524143, 41.7159207 ], [ -86.2524602, 41.7183452 ], [ -86.2524957, 41.7203202 ], [ -86.252532, 41.7222555 ], [ -86.2529334, 41.7222493 ], [ -86.2529333, 41.722247 ], [ -86.2529424, 41.7222469 ], [ -86.2529423, 41.7221357 ], [ -86.2529353, 41.7216987 ], [ -86.2529314, 41.7214524 ], [ -86.2529292, 41.7213097 ], [ -86.2529271, 41.721176 ], [ -86.2529226, 41.7208954 ], [ -86.2529138, 41.7203376 ], [ -86.2529129, 41.7202992 ], [ -86.252898, 41.7196598 ], [ -86.2528573, 41.7176903 ], [ -86.2528564, 41.7176299 ], [ -86.2528382, 41.7165199 ], [ -86.2528258, 41.7159196 ], [ -86.2528257, 41.7159176 ], [ -86.2528237, 41.7158627 ], [ -86.2528233, 41.7158058 ], [ -86.2528162, 41.7153111 ], [ -86.2528097, 41.7149324 ], [ -86.2527948, 41.714068 ], [ -86.2527943, 41.7140131 ], [ -86.2527938, 41.7139583 ], [ -86.2527874, 41.7133401 ], [ -86.2527698, 41.7123138 ], [ -86.2527493, 41.7111441 ], [ -86.2526301, 41.7109629 ], [ -86.2525112, 41.7107817 ], [ -86.2525115, 41.7107983 ], [ -86.2525022, 41.7107842 ], [ -86.2523053, 41.7105067 ], [ -86.2523355, 41.7123686 ] ] ], [ [ [ -86.2528063, 41.7238118 ], [ -86.2528416, 41.7238165 ], [ -86.2528729, 41.7238129 ], [ -86.2528607, 41.723275 ], [ -86.2527475, 41.7232763 ], [ -86.2527582, 41.7238087 ], [ -86.2527682, 41.7238072 ], [ -86.2528063, 41.7238118 ] ] ], [ [ [ -86.2694035, 41.7301716 ], [ -86.2693964, 41.7301684 ], [ -86.2693809, 41.7301627 ], [ -86.2694035, 41.7301716 ] ] ], [ [ [ -86.2667544, 41.7307778 ], [ -86.2668743, 41.7308106 ], [ -86.2669994, 41.7308385 ], [ -86.2671798, 41.7308769 ], [ -86.2672811, 41.7308961 ], [ -86.2673824, 41.7309074 ], [ -86.2674876, 41.7309157 ], [ -86.2676441, 41.7309257 ], [ -86.2677755, 41.730926 ], [ -86.2678872, 41.7309234 ], [ -86.2679909, 41.730916 ], [ -86.2681825, 41.7308904 ], [ -86.2682862, 41.7308712 ], [ -86.2683754, 41.730851 ], [ -86.2684894, 41.7308228 ], [ -86.2686611, 41.7307767 ], [ -86.2685551, 41.7306758 ], [ -86.268412, 41.7305516 ], [ -86.268351, 41.7304918 ], [ -86.2683009, 41.7304402 ], [ -86.2681176, 41.7305427 ], [ -86.2680288, 41.7305766 ], [ -86.2679421, 41.7306 ], [ -86.2678622, 41.7306138 ], [ -86.2677933, 41.7306204 ], [ -86.2677249, 41.7306214 ], [ -86.267632, 41.7306151 ], [ -86.2675643, 41.7306044 ], [ -86.26748, 41.7305836 ], [ -86.267191, 41.7304857 ], [ -86.2669496, 41.7304163 ], [ -86.2667061, 41.7303583 ], [ -86.2663516, 41.7302938 ], [ -86.2659535, 41.7302489 ], [ -86.2656608, 41.7302329 ], [ -86.2640504, 41.7302385 ], [ -86.2600407, 41.7302593 ], [ -86.2592672, 41.7302626 ], [ -86.2590465, 41.7302645 ], [ -86.2583368, 41.7302705 ], [ -86.2578234, 41.730261 ], [ -86.257283, 41.7302647 ], [ -86.2568145, 41.7302683 ], [ -86.2564875, 41.7302708 ], [ -86.2561195, 41.7302726 ], [ -86.2556326, 41.7302751 ], [ -86.2554119, 41.7302728 ], [ -86.2551102, 41.730273 ], [ -86.2548366, 41.730273 ], [ -86.2545714, 41.730273 ], [ -86.2542974, 41.7302731 ], [ -86.2540131, 41.7302731 ], [ -86.2538299, 41.7302734 ], [ -86.2530976, 41.7302737 ], [ -86.2530952, 41.7297155 ], [ -86.2530908, 41.729507 ], [ -86.2530866, 41.7293026 ], [ -86.2530823, 41.7290954 ], [ -86.2530781, 41.728893 ], [ -86.2530738, 41.7286858 ], [ -86.2530697, 41.7284876 ], [ -86.2529709, 41.7284881 ], [ -86.2529588, 41.7280875 ], [ -86.2530614, 41.7280863 ], [ -86.2530572, 41.7278791 ], [ -86.2530536, 41.7277048 ], [ -86.2530445, 41.7272678 ], [ -86.2530425, 41.7271684 ], [ -86.2530418, 41.7271354 ], [ -86.2529388, 41.727136 ], [ -86.2529271, 41.7266242 ], [ -86.2530312, 41.7266244 ], [ -86.2530229, 41.7262244 ], [ -86.2530143, 41.725808 ], [ -86.2530049, 41.7253504 ], [ -86.2529791, 41.724106 ], [ -86.2528795, 41.7241058 ], [ -86.2528746, 41.7238877 ], [ -86.2528395, 41.7238851 ], [ -86.2528055, 41.7238805 ], [ -86.2527802, 41.7238847 ], [ -86.2527597, 41.7238862 ], [ -86.2528716, 41.7299842 ], [ -86.2528786, 41.7302741 ], [ -86.2526941, 41.7302675 ], [ -86.2526985, 41.7303158 ], [ -86.2531059, 41.7303226 ], [ -86.2537013, 41.7303294 ], [ -86.2539772, 41.730327 ], [ -86.2544621, 41.7303314 ], [ -86.2548182, 41.7303296 ], [ -86.2553728, 41.7303307 ], [ -86.2556908, 41.730333 ], [ -86.2560168, 41.7303353 ], [ -86.2566567, 41.730332 ], [ -86.2570194, 41.7303301 ], [ -86.258139, 41.7303293 ], [ -86.2592125, 41.7303237 ], [ -86.2599471, 41.730319 ], [ -86.2610114, 41.7303154 ], [ -86.2625488, 41.7303065 ], [ -86.2634385, 41.7303048 ], [ -86.2636382, 41.7303058 ], [ -86.2642689, 41.7302966 ], [ -86.2645554, 41.7303039 ], [ -86.2647474, 41.7303187 ], [ -86.2651448, 41.7303747 ], [ -86.2653857, 41.7304148 ], [ -86.265566, 41.7304463 ], [ -86.2656648, 41.7304704 ], [ -86.2667544, 41.7307778 ] ] ], [ [ [ -86.2686038, 41.7314701 ], [ -86.269218, 41.7313022 ], [ -86.2687458, 41.7308791 ], [ -86.268288, 41.7309847 ], [ -86.2680088, 41.7310201 ], [ -86.2680116, 41.7311042 ], [ -86.2682616, 41.7310999 ], [ -86.2684594, 41.7310901 ], [ -86.2686038, 41.7314701 ] ] ], [ [ [ -86.2529906, 41.7343119 ], [ -86.2530198, 41.7356873 ], [ -86.2530424, 41.7375623 ], [ -86.2531504, 41.737563 ], [ -86.253136, 41.7365356 ], [ -86.2532517, 41.736528 ], [ -86.253248, 41.7361939 ], [ -86.2532434, 41.7358865 ], [ -86.2532377, 41.7356066 ], [ -86.2532323, 41.7353412 ], [ -86.2532268, 41.7350674 ], [ -86.2532213, 41.7347958 ], [ -86.253215, 41.7345262 ], [ -86.2532084, 41.7342463 ], [ -86.253202, 41.7339787 ], [ -86.2531954, 41.7337002 ], [ -86.2531888, 41.7334183 ], [ -86.2531825, 41.7331528 ], [ -86.2531759, 41.732875 ], [ -86.2531584, 41.732189 ], [ -86.2544635, 41.7321837 ], [ -86.2544242, 41.7304851 ], [ -86.254351, 41.7304848 ], [ -86.254403, 41.7321304 ], [ -86.253157, 41.7321341 ], [ -86.2531147, 41.7304794 ], [ -86.253114, 41.730452 ], [ -86.2529025, 41.7304503 ], [ -86.2529301, 41.7316474 ], [ -86.2529906, 41.7343119 ] ] ], [ [ [ -86.2533725, 41.7539413 ], [ -86.2533837, 41.7545607 ], [ -86.2533829, 41.7550787 ], [ -86.2533325, 41.7565952 ], [ -86.2532935, 41.7578379 ], [ -86.2532625, 41.7587307 ], [ -86.2532504, 41.760389 ], [ -86.2532499, 41.7604617 ], [ -86.2534628, 41.7604606 ], [ -86.2534618, 41.7603879 ], [ -86.2534673, 41.7595481 ], [ -86.2533527, 41.7595467 ], [ -86.2533981, 41.7582072 ], [ -86.2535032, 41.7582067 ], [ -86.2535075, 41.7580825 ], [ -86.2535146, 41.757878 ], [ -86.2535167, 41.7578093 ], [ -86.2535417, 41.7570161 ], [ -86.2535549, 41.7565948 ], [ -86.2535675, 41.7562174 ], [ -86.2535939, 41.7554221 ], [ -86.2536054, 41.7550769 ], [ -86.2536061, 41.7546275 ], [ -86.2536062, 41.7545562 ], [ -86.253595, 41.7539346 ], [ -86.2535922, 41.7538201 ], [ -86.2535728, 41.7530243 ], [ -86.2535708, 41.7529454 ], [ -86.2534706, 41.7529473 ], [ -86.2534644, 41.7526153 ], [ -86.2535627, 41.7526148 ], [ -86.2535539, 41.7522752 ], [ -86.2535518, 41.7521929 ], [ -86.2535514, 41.7521792 ], [ -86.2535492, 41.7520776 ], [ -86.2535301, 41.7512078 ], [ -86.2535253, 41.7509896 ], [ -86.2535204, 41.7507681 ], [ -86.2535155, 41.7505444 ], [ -86.2535107, 41.750327 ], [ -86.2535058, 41.7501033 ], [ -86.253501, 41.7498838 ], [ -86.2534987, 41.7497795 ], [ -86.2534964, 41.7496746 ], [ -86.2534915, 41.749455 ], [ -86.253487, 41.7492479 ], [ -86.253482, 41.7490222 ], [ -86.2534774, 41.7488095 ], [ -86.253473, 41.7486126 ], [ -86.2534688, 41.7484178 ], [ -86.253464, 41.748201 ], [ -86.2534591, 41.7479815 ], [ -86.2534547, 41.7477784 ], [ -86.2534502, 41.7475761 ], [ -86.2534456, 41.7473689 ], [ -86.2534413, 41.7471727 ], [ -86.2534347, 41.7468688 ], [ -86.2534297, 41.7466438 ], [ -86.2534251, 41.7464325 ], [ -86.2534202, 41.746213 ], [ -86.2534153, 41.7459893 ], [ -86.2533933, 41.7449864 ], [ -86.2533917, 41.7449157 ], [ -86.2533844, 41.7449157 ], [ -86.2533833, 41.7448636 ], [ -86.2533674, 41.7440994 ], [ -86.2533509, 41.7433009 ], [ -86.2533346, 41.7425154 ], [ -86.2533196, 41.7417957 ], [ -86.2533185, 41.7417127 ], [ -86.2533176, 41.7416448 ], [ -86.2533121, 41.7413052 ], [ -86.2533021, 41.7407056 ], [ -86.2532868, 41.7397898 ], [ -86.2532841, 41.7396224 ], [ -86.2532829, 41.7395373 ], [ -86.2532817, 41.7394619 ], [ -86.2532808, 41.739407 ], [ -86.2532799, 41.7393521 ], [ -86.2532454, 41.7377294 ], [ -86.2530466, 41.737729 ], [ -86.2530887, 41.7395383 ], [ -86.2531858, 41.7448639 ], [ -86.2530026, 41.7448628 ], [ -86.2530034, 41.7449136 ], [ -86.2530047, 41.7449801 ], [ -86.2531873, 41.7449819 ], [ -86.2533377, 41.7520767 ], [ -86.2533398, 41.7521755 ], [ -86.2533401, 41.7521901 ], [ -86.2533418, 41.7522742 ], [ -86.2533421, 41.752609 ], [ -86.2533725, 41.7539413 ] ] ] ] } } },
 ]
 
+export const calendarFeedUrl = 'https://sb79453bta.execute-api.us-east-2.amazonaws.com/county-calendar-feed'
+
 export type CalendarEvent = {
-  id: number;
+  id: string;
   start: string;
   end: string;
   title: string;
-  park: number;
+  park: number | null;
+  location?: string;
+  description?: string;
 }
-
-export const events: CalendarEvent[] = [
-  // July
-  { id: 1, start: '2025-07-05T09:00:00', end: '2025-07-05T12:00:00', title: 'Summer Nature Hike', park: 0 },
-  { id: 2, start: '2025-07-05T13:15:00', end: '2025-07-05T15:15:00', title: 'Junior Explorer Club', park: 0 },
-  { id: 3, start: '2025-07-12T08:30:00', end: '2025-07-12T11:30:00', title: 'Birdwatching Workshop', park: 5 },
-  { id: 4, start: '2025-07-12T19:00:00', end: '2025-07-12T21:00:00', title: 'Evening Campfire', park: 0 },
-  { id: 5, start: '2025-07-18T10:45:00', end: '2025-07-18T13:45:00', title: 'Kayaking 101', park: 3 },
-  { id: 6, start: '2025-07-22T21:00:00', end: '2025-07-22T23:45:00', title: 'Stargazing Night', park: 1 },
-  { id: 7, start: '2025-07-29T11:30:00', end: '2025-07-29T16:30:00', title: 'Family Picnic Day', park: 6 },
-
-  // August
-  { id: 8, start: '2025-08-02T07:15:00', end: '2025-08-02T08:30:00', title: 'Yoga in the Park', park: 6 },
-  { id: 9, start: '2025-08-09T09:00:00', end: '2025-08-09T10:15:00', title: '5K Trail Run', park: 5 },
-  { id: 10, start: '2025-08-09T13:30:00', end: '2025-08-09T16:00:00', title: 'Nature Journaling', park: 2 },
-  { id: 11, start: '2025-08-16T08:00:00', end: '2025-08-16T09:30:00', title: '3K Fun Walk', park: 1 },
-  { id: 12, start: '2025-08-16T14:15:00', end: '2025-08-16T17:15:00', title: 'Wildflower Photography', park: 2 },
-  { id: 13, start: '2025-08-21T18:45:00', end: '2025-08-21T21:00:00', title: 'Evening Campfire Stories', park: 0 },
-  { id: 14, start: '2025-08-30T10:00:00', end: '2025-08-30T15:00:00', title: 'Fall Gardening Workshop', park: 1 },
-
-  // September
-  { id: 15, start: '2025-09-03T09:00:00', end: '2025-09-03T12:00:00', title: 'Guided Nature Walk', park: 5 },
-  { id: 16, start: '2025-09-03T13:30:00', end: '2025-09-03T15:00:00', title: 'Junior Ranger Program', park: 0 },
-  { id: 17, start: '2025-09-10T10:15:00', end: '2025-09-10T13:15:00', title: 'Photography Basics', park: 6 },
-  { id: 18, start: '2025-09-10T18:00:00', end: '2025-09-10T20:30:00', title: 'Evening Hike', park: 4 },
-  { id: 19, start: '2025-09-15T08:45:00', end: '2025-09-15T12:00:00', title: 'Fall Foliage Hike', park: 3 },
-  { id: 20, start: '2025-09-19T09:00:00', end: '2025-09-20T17:00:00', title: 'Outdoor Art Workshop', park: 6 }, // multi-day
-  { id: 21, start: '2025-09-26T08:30:00', end: '2025-09-26T14:00:00', title: 'Canoe Exploration', park: 3 },
-  { id: 22, start: '2025-09-26T15:45:00', end: '2025-09-26T18:15:00', title: 'Birdwatching Basics', park: 1 },
-]

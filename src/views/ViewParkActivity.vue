@@ -2,12 +2,14 @@
 import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 import { activities, activityTypes, parks } from '@/shared/constants'
-import type { Activity, ActivityType, Park } from '@/shared/constants';
-import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons';
-import PageResponsive from '@/components/page/PageResponsive.vue';
-import { evaPhoneCallOutline } from '@quasar/extras/eva-icons';
+import type { Activity, ActivityType, Park } from '@/shared/constants'
+import { backIcon, mapPinIcon } from '@/shared/icons'
+import InfoCard from '@/components/InfoCard.vue'
+import PageResponsive from '@/components/page/PageResponsive.vue'
+import SocialShare from '@/components/SocialShare.vue'
+import { evaPhoneCallOutline } from '@quasar/extras/eva-icons'
 
-const route = useRoute();
+const route = useRoute()
 
 const park = ref<Park | undefined>(
   parks.find(p => p.id === Number(route.params.park))
@@ -23,9 +25,9 @@ const activityType = ref<ActivityType | undefined>(
   activity.value ? activityTypes[activity.value.activityType] : undefined
 );
 
-console.log("Park:", park?.value);
-console.log("Activity:", activity?.value);
-console.log("ActivityType:", activityType?.value);
+console.log("Park:", park?.value)
+console.log("Activity:", activity?.value)
+console.log("ActivityType:", activityType?.value)
 </script>
 
 <template>
@@ -45,10 +47,11 @@ console.log("ActivityType:", activityType?.value);
       />
     </div>
 
-    <!-- Info Card -->
-    <div class="info-card q-pa-lg">
-      <h3 class="text-h5 q-mb-sm info-card-header">{{ activityType?.label }} at</h3>
-      <h4 class="text-h5 q-mb-sm info-card-subheader">{{ park?.name }}</h4>
+    <InfoCard
+      :header="(activity?.private ? 'Private ' : '') + (activity?.night ? 'Night ' :  activity?.evening ? 'Evening ' : '') + (activity?.labelOverride ?? activityType?.label) + ' at'"
+      :subheader="park?.name"
+    >
+      <div class="q-mb-lg"></div>
       <div v-if="activity?.phone || park?.address" class="contact q-mb-md">
         <div v-if="park?.phone" class="row items-center q-mb-xs">
           <q-icon :name="evaPhoneCallOutline" size="20px" class="q-mr-sm" />
@@ -65,6 +68,62 @@ console.log("ActivityType:", activityType?.value);
             </a>
           </span>
         </div>
+      </div>
+
+      <!-- Dates / Times -->
+      <div v-if="activity?.dates || activity?.times" class="program-details q-mb-md">
+        <h5 class="text-subtitle1 q-mb-sm">Dates & Times</h5>
+
+        <ul>
+          <li v-for="(date, index) in activity?.dates" :key="`date-${index}`">
+            <template v-if="typeof date === 'string'">
+              {{ date }}
+            </template>
+            <template v-else-if="'start' in date && 'end' in date">
+              {{ date.start }} - {{ date.end }}
+            </template>
+            <template v-else-if="Array.isArray(date)">
+              {{ date.join(', ') }}
+            </template>
+          </li>
+
+          <li
+            v-for="(timeBlock, index) in Array.isArray(activity?.times)
+              ? activity.times
+              : activity?.times
+                ? [activity.times]
+                : []"
+            :key="`time-${index}`"
+          >
+            <template v-if="timeBlock && 'day' in timeBlock">
+              {{ timeBlock.day }}:
+            </template>
+
+            <template v-else-if="timeBlock && 'days' in timeBlock">
+              {{ Array.isArray(timeBlock.days)
+                ? timeBlock.days.join(', ')
+                : timeBlock.days }}:
+            </template>
+
+            <template v-if="typeof timeBlock.times === 'string'">
+              {{ timeBlock.times }}
+            </template>
+
+            <template v-else-if="Array.isArray(timeBlock.times)">
+              {{ timeBlock.times.join(', ') }}
+            </template>
+
+            <template
+              v-else-if="
+                typeof timeBlock.times === 'object' &&
+                'start' in timeBlock.times &&
+                'end' in timeBlock.times
+              "
+            >
+              {{ timeBlock.times.start }} - {{ timeBlock.times.end }}
+            </template>
+          </li>
+        </ul>
       </div>
 
       <!-- Activity Details -->
@@ -89,17 +148,9 @@ console.log("ActivityType:", activityType?.value);
           </li>
         </ul>
       </div>
+    </InfoCard>
 
-      <!-- Social Share -->
-      <div class="share-section q-pa-md text-center">
-        <h5 class="text-subtitle1 q-mb-sm">Share Your Experience</h5>
-        <div class="row justify-center q-gutter-md">
-          <q-btn color="primary" round icon="f"></q-btn>
-          <q-btn color="primary" round icon="i" />
-          <q-btn color="primary" round :icon="shareIcon" />
-        </div>
-      </div>
-    </div>
+    <SocialShare />
   </PageResponsive>
 </template>
 
@@ -117,44 +168,7 @@ console.log("ActivityType:", activityType?.value);
   height: 318px;
   opacity: 0.9;
 }
-.info-card {
-  background: #e0f7f7;
-  height: 100%;
-  border-top-left-radius: 45px;
-  border-top-right-radius: 45px;
-  transform: translateY(-60px);
-}
-.info-card-header {
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-  /*text-transform: capitalize;*/
-}
-.info-card-subheader {
-  margin-top: 0px;
-  margin-bottom: 0px;
-  font-size: 26px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-  text-transform: capitalize;
-}
 .contact {
   margin-left: 25px;
-}
-.share-section {
-  background: white;
-  bottom: 0;
-  width: 100vw;
-  flex-direction: column;
-  position: fixed;
-  height: 515px/2;
-  left: 50%;
-  transform: translateX(-50%);
-  border-top-left-radius: 100% 100px;
-  border-top-right-radius: 100% 100px;
-  justify-content: center;
-  align-items: center;
 }
 </style>

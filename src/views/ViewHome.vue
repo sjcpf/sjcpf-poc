@@ -98,6 +98,7 @@ const homeActivityKeys: (keyof typeof activityTypes)[] = [
             src="/images/seasonal.png"
             ratio="1"
             class="rounded-borders q-mt-md col"
+            @click="$router.push({ name: RouteNameEnum.SEASONS })"
           >
             <div class="image-button-label absolute-bottom bg- text-white text-subtitle2 q-pa-sm">
               Seasonal Activities

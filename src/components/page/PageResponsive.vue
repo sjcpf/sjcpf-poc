@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 /**
  * Responsive page with a page scroller. Additional bottom margin is added to the page content to
  * make more room for the scroller. Use the slot for your page content.

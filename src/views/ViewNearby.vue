@@ -53,7 +53,7 @@ function onDragStart(e: TouchEvent | MouseEvent) {
       />
     </div>
 
-    <!-- Parks List Card (unchanged) -->
+    <!-- Parks List Card -->
     <div
       class="list-card"
       :class="{ expanded }"
@@ -95,35 +95,13 @@ function onDragStart(e: TouchEvent | MouseEvent) {
     height: 40px;
     margin: 0;
   }
-
   .page-name {
     padding-top: 4px;
   }
-
   .hero-img {
     border-top-left-radius: 45px;
     border-top-right-radius: 45px;
   }
-
-  .info-card-header {
-    font-size: 30px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-    text-transform: capitalize;
-    margin-bottom: 10px;
-  }
-
-  .info-subheader {
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
-    text-transform: capitalize;
-    margin-top: 10px;
-    margin-bottom: 5px;
-  }
-
   .list-card {
     position: fixed;
     bottom: 0;
@@ -139,11 +117,9 @@ function onDragStart(e: TouchEvent | MouseEvent) {
     flex-direction: column;
     align-items: center;
   }
-
   .list-card.expanded {
     transform: translateY(0);
   }
-
   .handle {
     width: 40px;
     height: 3px;
@@ -154,12 +130,10 @@ function onDragStart(e: TouchEvent | MouseEvent) {
     cursor: grab;
     flex-shrink: 0; /* prevent squishing */
   }
-
   .park-list {
     width: 100%;
     overflow-y: auto;
   }
-
   .park-item {
     display: flex;
     justify-content: space-between;
@@ -175,7 +149,6 @@ function onDragStart(e: TouchEvent | MouseEvent) {
     font-size: 14px;
     color: #fff;
   }
-
   .park-left {
     display: flex;
     flex-direction: column;      /* stack title + subtitle vertically */
@@ -188,23 +161,19 @@ function onDragStart(e: TouchEvent | MouseEvent) {
     line-height: normal;
     text-transform: capitalize;
   }
-
   .park-title {
     font-weight: 600;
     font-size: 14px;
     line-height: normal;
   }
-
   .park-subtitle {
     font-size: 12px;
     opacity: 0.85;
   }
-
   .park-right {
     display: flex;
     align-items: center;
   }
-
   .distance-value {
     color: #fff;
     font-weight: 700;

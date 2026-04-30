@@ -1,6 +1,7 @@
 
 <script lang='ts' setup>
 import { backIcon } from '@/shared/icons';
+import InfoCard from '@/components/InfoCard.vue';
 import PageResponsive from '@/components/page/PageResponsive.vue';
 
 </script>
@@ -21,9 +22,7 @@ import PageResponsive from '@/components/page/PageResponsive.vue';
       />
     </div>
 
-    <!-- Info Card -->
-    <div class="info-card q-pa-lg">
-      <h3 class="info-card-header q-mb-sm">Programs & Events</h3>
+    <InfoCard header="Programs & Events">
       <div>
         <h4 class="info-subheader">
           <router-link to="/calendar" class="text-primary">Calendar Of Events</router-link>
@@ -48,7 +47,7 @@ import PageResponsive from '@/components/page/PageResponsive.vue';
           </li>
         </ul>
       </div>
-    </div>
+    </InfoCard>
   </PageResponsive>
 </template>
 
@@ -65,21 +64,6 @@ import PageResponsive from '@/components/page/PageResponsive.vue';
   border-top-right-radius: 45px;
   height: 318px;
   opacity: 0.9;
-}
-.info-card {
-  height: 100%;
-  background: #e0f7f7;
-  border-top-left-radius: 45px;
-  border-top-right-radius: 45px;
-  transform: translateY(-60px);
-}
-.info-card-header {
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-  text-transform: capitalize;
-  margin-bottom: 10px;
 }
 .info-subheader {
   font-size: 16px;

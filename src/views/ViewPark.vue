@@ -1,12 +1,16 @@
 <script setup lang="ts">
+import InfoCard from '@/components/InfoCard.vue'
 import PageResponsive from '@/components/page/PageResponsive.vue'
+import SocialShare from '@/components/SocialShare.vue'
 import { activities, activityTypes, appName, parks, trails, type Park } from '@/shared/constants'
-import { backIcon, mapPinIcon, shareIcon } from '@/shared/icons'
+import { backIcon, mapPinIcon } from '@/shared/icons'
 import { biTree } from '@quasar/extras/bootstrap-icons'
 import { evaPhoneCallOutline } from '@quasar/extras/eva-icons'
 import { useMeta } from 'quasar'
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
+
+type TrailData = { id: number, park: number; count: number; totalLength: number, activityType: string }
 
 useMeta({ title: `${appName} - Park Information` })
 
@@ -39,6 +43,18 @@ const parkDocs = computed(() => {
   return length && length > 0 ? park.value?.documents : undefined
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isTrailData(obj: any): obj is TrailData {
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    typeof obj.park === 'number' &&
+    typeof obj.count === 'number' &&
+    typeof obj.totalLength === 'number' &&
+    obj.activityType === 'hiking'
+  )
+}
+
 onMounted(() => {
   window.scrollTo({ top: 0, left: 0 })
 })
@@ -62,9 +78,7 @@ onMounted(() => {
       />
     </div>
 
-    <!-- Info Card -->
-    <div class="info-card q-pa-lg">
-      <h3 class="text-h5 q-mb-sm info-card-header">{{ park?.name }}</h3>
+    <InfoCard :header="park?.name">
       <!-- Park Information -->
       <div class="q-pa-lg">
         <div>
@@ -103,6 +117,9 @@ onMounted(() => {
                 class="text-primary"
               >
                 {{ activityTypes[act.activityType]?.label }}
+                <span v-if="!isTrailData(act)">
+                  <span> {{ act.private ? '(Private)' : ''}}</span>
+                </span>
               </RouterLink>
             </li>
           </ul>
@@ -116,7 +133,8 @@ onMounted(() => {
                 :to="`/parks/${trail.park}/trails/${trail.id}`"
                 class="text-primary"
               >
-                {{ trails.find(t => t.id === trail.id)?.name }}
+                {{ trail?.name }}
+                <span>({{ trail.length.toFixed(2) }}mi)</span>
               </RouterLink>
             </li>
           </ul>
@@ -140,17 +158,9 @@ onMounted(() => {
           </ul>
         </div>
       </div>
+    </InfoCard>
 
-      <!-- Social Share -->
-      <div class="share-section q-pa-md text-center">
-        <h5 class="text-subtitle1 q-mb-sm">Share Your Experience</h5>
-        <div class="row justify-center q-gutter-md">
-          <q-btn color="primary" round icon="f"></q-btn>
-          <q-btn color="primary" round icon="i" />
-          <q-btn color="primary" round :icon="shareIcon" />
-        </div>
-      </div>
-    </div>
+    <SocialShare />
   </PageResponsive>
 </template>
 
@@ -168,36 +178,8 @@ onMounted(() => {
   height: 318px;
   opacity: 0.9;
 }
-.info-card {
-  background: #e0f7f7;
-  height: 100%;
-  border-top-left-radius: 45px;
-  border-top-right-radius: 45px;
-  transform: translateY(-60px);
-}
-.info-card-header {
-  font-size: 30px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-  text-transform: capitalize;
-}
 .contact {
   margin-left: 25px;
-}
-.share-section {
-  background: white;
-  bottom: 0;
-  width: 100vw;
-  flex-direction: column;
-  position: fixed;
-  height: 515px/2;
-  left: 50%;
-  transform: translateX(-50%);
-  border-top-left-radius: 100% 100px;
-  border-top-right-radius: 100% 100px;
-  justify-content: center;
-  align-items: center;
 }
 .bullet-list {
   margin-top: 10px;
